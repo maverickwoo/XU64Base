@@ -10,7 +10,7 @@
 VBM='VBoxManage'
 ISO="$1"
 CPUS=1                          #small base
-MEM=512                         #small base
+MEM=768                         #small base (512 is too small for desktop)
 VRAM=24                         #prepare for retina
 DISKSIZEGB=${2:-256}            #256GB by default
 
@@ -48,7 +48,7 @@ else
          --usb on \
          --usbehci on
 
-    # configure IDE and attach iso
+    # configure IDE and attach Xubuntu iso
     $VBM storagectl $VMUUID \
          --name IDE \
          --add ide \
@@ -62,6 +62,21 @@ else
          --device 0 \
          --type dvddrive \
          --medium $ISO
+
+    # attach Guest Additions iso
+    # https://www.virtualbox.org/ticket/13040
+    $VBM storageattach $VMUUID \
+         --storagectl IDE \
+         --port 1 \
+         --device 1 \
+         --type dvddrive \
+         --medium emptydrive
+    $VBM storageattach $VMUUID \
+         --storagectl IDE \
+         --port 1 \
+         --device 1 \
+         --type dvddrive \
+         --medium additions
 
     # configure SATA and attach new hdd
     VMPREFIX=$($VBM showvminfo $VMUUID --machinereadable |
@@ -92,16 +107,16 @@ else
 VM created.
 
 When running the Xubuntu installer:
-1. NO need to 'Download updates while installing'.
-2. Enable installing 3rd-party software.
-3. Use LVM.
+1. NO need to 'Download updates while installing' (we will dist-upgrade later).
+2. Enable installing 3rd-party software if you want a nice desktop environment.
+3. Use LVM, always.
 4. name          = vagrant
    computer name = XU64    (no base!)
-   user          = vagrant (don't worry: we will create a new user later)
+   user          = vagrant (don't worry, we will create your account later)
    password      = vagrant
 5. At 'Installation Complete', click 'Restart Now'.
 6. A minute later you will see gibberish. Use VirtualBox to shutdown the VM.
-7. Take a snapshot.
+7. Take a snapshot of the VM.
 
 Enjoy!
 EOM

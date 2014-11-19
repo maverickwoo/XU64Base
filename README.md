@@ -9,7 +9,10 @@ needs, the box should support:
 
 * [Atom](https://atom.io/), for editing [Github-flavored Markdown](https://help.github.com/articles/github-flavored-markdown/)
 * [Docker](https://www.docker.com/)
+* [Google Chrome](http://www.google.com/chrome/)
+* [IDA Pro](https://www.hex-rays.com/products/ida/)
 * [OCaml](https://ocaml.org/) with [OPAM](http://opam.ocamlpro.com/), for developing with the CMU [Binary Analysis Platform (BAP)](https://github.com/BinaryAnalysisPlatform/)
+* [Qira](https://github.com/BinaryAnalysisPlatform/qira)
 
 ## Step -1: Preparation
 
@@ -23,11 +26,11 @@ The script `0.sh` creates and registers an empty VM with VirtualBox. Its
 defaults are chosen to be sane for being a base Vagrant box.
 
 ```
-$./0.sh ~/ISOs/xubuntu-14.04.1-desktop-amd64.iso [disk-size-in-GB]
+yourself@host$ ./0.sh ~/ISOs/xubuntu-14.04.1-desktop-amd64.iso [disk-size-in-GB]
 ```
 
 After running this script, start your VM to install Xubuntu. You should follow
-the instructions printed by the script to interact with the installer.
+the instructions printed by the script when interacting with the installer.
 
 At this end of this step, you should have a VM with a fresh installation of
 Xubuntu, i.e., it has __*never*__ been booted. Remember to take a snapshot as
@@ -39,7 +42,7 @@ Boot the VM and login as `vagrant` with the password `vagrant`. Then run the
 script `1.sh`.
 
 ```
-$./1.sh
+vagrant@VM$ ./1.sh
 ```
 
 The script starts with a *manual* portion, which will:
@@ -54,10 +57,10 @@ snapshot.
 
 ## Step 2: Second Boot
 
-Boot the VM and login as `vagrant`. Then run the script `2.sh`.
+Boot the VM and login as yourself. Then run the script `2.sh`.
 
 ```
-./2.sh
+yourself@VM$ ./2.sh
 ```
 
 The script is entirely automatic. Its running time depends on your network
