@@ -1,5 +1,8 @@
 #!/bin/bash -i
 
+# This script should finish quickly.
+# All apt adjustments should happen here since 2.sh should be idempotent.
+
 #### SANITY CHECK ####
 
 # don't bother updating yet
@@ -40,17 +43,24 @@ fi
 
 #### AUTOPILOT ####
 
-# antialiasing
+# apt antialiasing
 # https://github.com/achaphiv/ppa-fonts/blob/master/ppa/README.md
 sudo add-apt-repository -y ppa:no1wantdthisname/ppa
 
-# newest ocaml + opam
+# apt newest ocaml + opam
 sudo add-apt-repository -y ppa:avsm/ocaml42+opam12
 
-# must update now or else a package may have been removed (one example is curl)
+# apt chrome: http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
+# filename is important since they try to edit this file
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | \
+    sudo apt-key add -
+echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' | \
+    sudo tee -a /etc/apt/sources.list.d/google-chrome.list > /dev/null
+
+# must update anyway (curl used to have problem if we don't update)
 sudo apt-get update
 
-# tier 0: my eyes
+# my eyes
 sudo apt-get install -y \
      fontconfig-infinality \
      libfreetype6
@@ -58,12 +68,6 @@ sudo ln -sfT /etc/fonts/infinality/styles.conf.avail/win7 \
      /etc/fonts/infinality/conf.d
 sudo sed -i 's/^USE_STYLE="DEFAULT"/USE_STYLE="WINDOWS"/' \
      /etc/profile.d/infinality-settings.sh
-
-# package management
-sudo apt-get install -y \
-     apt-file \
-     aptitude
-sudo apt-file update & #good to cache, plus will avoid update dialog
 
 # install Guest Additions early to enable screen resize and copy-and-paste
 sudo apt-get install -y dkms
@@ -76,7 +80,7 @@ sudo sed -ri 's/^(DEFAULT_FORWARD_POLICY)=.*/\1="ACCEPT"/' /etc/default/ufw
 sudo sed -ri \
     's/^(GRUB_CMDLINE_LINUX)=.*/\1="cgroup_enable=memory swapaccount=1"/' \
     /etc/default/grub
-sudo update-grub
+sudo update-grub &
 
 # docker-ssh and docker_ip
 sudo apt-get install -y curl

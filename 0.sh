@@ -12,12 +12,14 @@ ISO="$1"
 CPUS=1                          #small base
 MEM=768                         #small base (512 is too small for desktop)
 VRAM=24                         #prepare for retina
-DISKSIZEGB=${2:-256}            #256GB by default
+DISKSIZEGB=${2:-80}
 
 if [ ! -f "$1" ]; then
 
-    echo 'Usage:'
-    echo '$./0.sh iso-path [disk-size-in-GB]'
+    cat <<EOM
+Usage:
+yourself@host\$ ./0.sh iso-path [disk-size-in-GB (default $DISKSIZEGB)]
+EOM
 
 else
 
@@ -106,16 +108,18 @@ else
     cat <<"EOM"
 VM created.
 
-When running the Xubuntu installer:
-1. NO need to 'Download updates while installing' (we will dist-upgrade later).
-2. Enable installing 3rd-party software if you want a nice desktop environment.
+Start the VM to run the Xubuntu installer. Notes:
+1. No need to "Download updates while installing" (we will dist-upgrade later).
+2. Enable "Install this third-party software" (if you want a nice desktop env).
 3. Use LVM, always.
 4. name          = vagrant
    computer name = XU64    (no base!)
-   user          = vagrant (don't worry, we will create your account later)
+   username      = vagrant (don't worry, we will create your account later)
    password      = vagrant
-5. At 'Installation Complete', click 'Restart Now'.
+5. At "Installation Complete", click "Restart Now".
 6. A minute later you will see gibberish. Use VirtualBox to shutdown the VM.
+   (The message "Please remove installation media and close the tray (if any)
+    then press ENTER:" mixed inside other shutdown messages.)
 7. Take a snapshot of the VM.
 
 Enjoy!

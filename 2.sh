@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script should be idempotent.
+
 #### SANITY CHECK ####
 
 # don't bother updating yet
@@ -13,24 +15,24 @@ docker pull phusion/baseimage:latest &
 # download atom in background
 wget -q -O /tmp/atom.deb https://atom.io/download/deb &
 
-# chrome: http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
-# filename is important since they try to edit this file
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | \
-    sudo apt-key add -
-echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' | \
-    sudo tee -a /etc/apt/sources.list.d/google-chrome.list > /dev/null
-
 # uninstall some useless stuff here
 # (does not seem productive: leave empty)
 
 # dist-upgrade
-sudo apt-get update #must happen after inserting apt
+sudo apt-get update
 sudo apt-get dist-upgrade -y
+
+# package management
+sudo apt-get install -y \
+     apt-file \
+     aptitude
+sudo apt-file update & #good to cache, plus will avoid update dialog
 
 # tier 1: bap + ida + qira
 sudo apt-get install -y \
-     opam       `#obviously` \
-     python-pip `#git-review`
+     ocaml \
+     opam \
+     python-pip `#cdiff`
 sudo apt-get install -y \
      libqtgui4:i386
 sudo apt-get install -y \
@@ -61,12 +63,18 @@ wait
 sudo dpkg -i /tmp/atom.deb
 rm /tmp/atom.deb
 
+# install cdiff
+pip install --user cdiff
+[ -d ~/bin ] || mkdir ~/bin
+ln -s ~/.local/bin/cdiff ~/bin
+
 # courtesy
+sudo apt-get autoremove
 sudo updatedb
 
-# final step: zero out space before packaging
+# final step: zero out empty space before packaging into a box
 echo 'Zeroing empty space to reduce box size...'
-echo '(can take minutes on a large disk image)'
+echo '(can take several minutes on a large disk image)'
 time sudo dd if=/dev/zero of=/EMPTY bs=1M
 sudo rm -f /EMPTY
 
@@ -76,8 +84,8 @@ cat <<"EOM"
 Shutdown VM and take a snapshot. Then, in the host, execute these commands where
 "XU64Base" is your chosen name of this VM:
 
-yourself@host$ vagrant package --base XU64Base
-yourself@host$ vagrant box add --force versioning.json
+  yourself@host$ vagrant package --base XU64Base
+  yourself@host$ vagrant box add --force versioning.json
 
 (Remember that copy-and-paste works inside this VM.)
 
