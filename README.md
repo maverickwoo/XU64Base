@@ -1,4 +1,67 @@
-XU64Base
-========
+# XU64Base Scripts
 
-Some scripts to help setting up a Xubuntu VM using VirtualBox
+I wrote these scripts to help *me* set up [Xubuntu](http://xubuntu.org/) VMs. I
+prefer VirtualBox, and I am sharing these in the hope that it may save others
+some time.
+
+My philosophy here is to create a VM that can be used as a base Vagrant box. Out
+of my own need, the box should support Docker and OCaml.
+
+## Step -1: Preparation
+
+I cache a copy of the current Xubuntu LTS ISO in `~/ISOs` on all my machines.
+These scripts are tested against this ISO.
+
+## Step 0: Create VM in VirtualBox
+
+The script `0.sh` creates and registers an empty VM with VirtualBox. Its
+defaults are chosen to be sane for being a base Vagrant box.
+
+```
+$./0.sh ~/ISOs/xubuntu-14.04.1-desktop-amd64.iso [disk-size-in-GB]
+```
+
+After running this script, start your VM to install Xubuntu. You should follow
+the instructions printed by the script to interact with the installer.
+
+At this end of this step, you should have a VM with a fresh installation of
+Xubuntu, i.e., it has __*never*__ been booted. Remember to take a snapshot!
+
+## Step 1: First Boot
+
+Boot the VM and login as `vagrant` with the password `vagrant`. Then run the
+script `1.sh`.
+
+```
+$./1.sh
+```
+
+The script starts with a *manual* portion, which will:
+1. create a user for you, and
+2. install VirtualBox Guest Additions.
+
+After you have pressed Enter to close the Guest Additions installer, the script
+will enter its *automatic* portion. You can sit back and relax for a minute.
+
+When the script finishes, it will inform you to shutdown the VM and take a
+snapshot.
+
+## Step 2: Second Boot
+
+Boot the VM and login as `vagrant`. Then run the script `2.sh`.
+
+```
+./2.sh
+```
+
+The script is entirely automatic. Its running time depends on your network
+connection and the size of your disk image. 10 minutes would be a good guess.
+
+__IMPORTANT:__ While you are waiting for the script to finish, edit
+`versioning.json`. Make sure you edit the `name`, `description`, and `version`
+settings. The last setting is a date string used for vagrant box versioning.
+
+When the script finishes, it will show you how to create a base box using the
+snapshot you have just created.
+
+## Step 3: __*(to be continued)*__
