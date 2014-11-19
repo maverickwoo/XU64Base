@@ -17,6 +17,9 @@ fi
 # pull docker baseimage in background (specifically leave out sudo)
 docker pull phusion/baseimage:latest &
 
+# atom
+wget -q -O atom.deb https://atom.io/download/deb &
+
 # chrome: http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
 # filename is important since they try to edit this file
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | \
@@ -75,6 +78,10 @@ sudo updatedb
 
 # make sure all background jobs are done
 wait
+
+# install atom
+sudo dpkg -i atom.deb
+rm atom.deb
 
 # final step: zero out space before packaging
 if [ "vagrant" = "$USER" ]; then
