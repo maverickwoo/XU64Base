@@ -1,16 +1,21 @@
 # XU64Base Scripts
 
-I wrote these scripts to help *me* set up [Xubuntu](http://xubuntu.org/) VMs. I
-prefer VirtualBox, and I am sharing these in the hope that it may save others
-some time.
+I wrote these scripts to help *me* set up [Xubuntu](http://xubuntu.org/) virtual
+machines (VMs). I prefer [VirtualBox](https://www.virtualbox.org/), and I am
+sharing these in the hope that it may save others some time.
 
-My philosophy here is to create a VM that can be used as a base Vagrant box. Out
-of my own need, the box should support Docker and OCaml.
+My goal is to create a VM that can be used as a base Vagrant box. Out of my own
+needs, the box should support:
+
+* [Atom](https://atom.io/), for editing [Github-flavored Markdown](https://help.github.com/articles/github-flavored-markdown/)
+* [Docker](https://www.docker.com/)
+* [OCaml](https://ocaml.org/) with [OPAM](http://opam.ocamlpro.com/), for developing with the CMU [Binary Analysis Platform (BAP)](https://github.com/BinaryAnalysisPlatform/)
 
 ## Step -1: Preparation
 
 I cache a copy of the current Xubuntu LTS ISO in `~/ISOs` on all my machines.
-These scripts are tested against this ISO.
+These scripts are tested against this ISO, though I believe these scripts should
+also work with other Ubuntu distributions as long as they are the same release.
 
 ## Step 0: Create VM in VirtualBox
 
@@ -25,7 +30,8 @@ After running this script, start your VM to install Xubuntu. You should follow
 the instructions printed by the script to interact with the installer.
 
 At this end of this step, you should have a VM with a fresh installation of
-Xubuntu, i.e., it has __*never*__ been booted. Remember to take a snapshot!
+Xubuntu, i.e., it has __*never*__ been booted. Remember to take a snapshot as
+instructed by the script!
 
 ## Step 1: First Boot
 
@@ -59,7 +65,8 @@ connection and the size of your disk image. 10 minutes would be a good guess.
 
 __IMPORTANT:__ While you are waiting for the script to finish, edit
 `versioning.json`. Make sure you edit the `name`, `description`, and `version`
-settings. The last setting is a date string used for vagrant box versioning.
+settings. The `version` setting is a date string separated by dot used for
+vagrant box versioning.
 
 When the script finishes, it will show you how to create a base box using the
 snapshot you have just created.

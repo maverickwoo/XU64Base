@@ -17,7 +17,7 @@ fi
 # pull docker baseimage in background (specifically leave out sudo)
 docker pull phusion/baseimage:latest &
 
-# atom
+# download atom in background
 wget -q -O atom.deb https://atom.io/download/deb &
 
 # chrome: http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
