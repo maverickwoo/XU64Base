@@ -9,20 +9,20 @@
 pkill -f /usr/bin/update-manager
 
 # who should run this?
-if [ "vagrant" != "$USER" ]; then
-    echo "Please run this script as the user 'vagrant'. Aborting..."
+if [ vagrant != "$USER" ]; then
+    echo 'Please run this script as the user "vagrant". Aborting...'
     exit 1
 fi
 
 #### INTERACTIVE ####
 
 # NOPASSWD vagrant
-echo 'vagrant' | sudo -S sed -i '$avagrant ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
+echo vagrant | sudo -S sed -i '$avagrant ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
 echo '[The answer is "vagrant".]'
 echo
 
 # NOPASSWD myself
-echo "Create your own user account: (leave empty to skip)"
+echo 'Create your own user account: (leave empty to skip)'
 read -ep 'Enter username: ' GUESTLOGIN
 if [ -z "$GUESTLOGIN" ]; then
     echo '(skipped)'
@@ -38,7 +38,7 @@ sudo chown -R vagrant:vagrant /media/vagrant
 sudo mount -r /dev/sr1 /media/vagrant/VBOX
 if [ -z "$(find /media/vagrant -maxdepth 1 -type d -name 'VBOX*' -print \
            -quit)" ]; then
-    read -ep "Press ENTER after you have mounted the Guest Additions CD..."
+    read -ep 'Press ENTER after you have mounted the Guest Additions CD...'
 fi
 
 #### AUTOPILOT ####
@@ -47,11 +47,13 @@ fi
 # https://github.com/achaphiv/ppa-fonts/blob/master/ppa/README.md
 sudo add-apt-repository -y ppa:no1wantdthisname/ppa
 
-# apt newest ocaml + opam
+# apt latest ocaml + opam
+# https://launchpad.net/~avsm/+archive/ubuntu/ocaml42+opam12
 sudo add-apt-repository -y ppa:avsm/ocaml42+opam12
 
-# apt chrome: http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
-# filename is important since they try to edit this file
+# apt chrome
+# http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
+# exact filename is important since they try to edit this file
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | \
     sudo apt-key add -
 echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' | \
