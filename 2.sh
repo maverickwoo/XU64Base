@@ -13,7 +13,10 @@ pkill -f /usr/bin/update-manager
 docker pull phusion/baseimage:latest &
 
 # download atom in background
-wget -q -O /tmp/atom.deb https://atom.io/download/deb &
+wget -nv -O /tmp/atom.deb https://atom.io/download/deb &
+
+# download fonts in background
+wget -nv -O /tmp/Noto.zip https://www.google.com/get/noto/pkgs/Noto.zip &
 
 # uninstall some useless stuff here
 # (does not seem productive: leave empty)
@@ -43,17 +46,21 @@ sudo ln -s $(locate git-new-workdir) /usr/local/bin
 
 # tier 2: what I consider to be good stuff that everyone wants
 sudo apt-get install -y \
+     augeas-tools \
      bash-doc \
      emacs24 \
      emacs24-el \
+     font-manager \
      htop \
      mosh \
      nmap \
+     realpath \
      screen \
      silversearcher-ag \
      ssh \
      tig \
      tmux \
+     tree \
      vim-gtk
 
 # make sure all background jobs are done
@@ -62,6 +69,11 @@ wait
 # install atom
 sudo dpkg -i /tmp/atom.deb
 rm /tmp/atom.deb
+
+# install Noto
+sudo unzip /tmp/Noto.zip -d /usr/share/fonts/Noto
+sudo chmod -R og=u,og-w /usr/share/fonts/Noto
+rm /tmp/Noto.zip
 
 # install cdiff
 pip install --user cdiff
