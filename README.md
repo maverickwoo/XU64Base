@@ -7,7 +7,7 @@ sharing these in the hope that it may save others some time.
 My goal is to create a VM that can be used as a base Vagrant box. Out of my own
 needs, the box should support:
 
-* [Atom](https://atom.io/), for editing [Github-flavored Markdown](https://help.github.com/articles/github-flavored-markdown/)
+* [Atom](https://atom.io/), for editing [Github-flavored Markdown](https://help.github.com/articles/github-flavored-markdown/) like this document
 * [Docker](https://www.docker.com/)
 * [Google Chrome](http://www.google.com/chrome/)
 * [IDA Pro](https://www.hex-rays.com/products/ida/)

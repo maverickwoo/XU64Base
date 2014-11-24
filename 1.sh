@@ -45,19 +45,22 @@ fi
 
 # apt antialiasing
 # https://github.com/achaphiv/ppa-fonts/blob/master/ppa/README.md
-sudo add-apt-repository -y ppa:no1wantdthisname/ppa
+sudo add-apt-repository -y ppa:no1wantdthisname/ppa &
 
 # apt latest ocaml + opam
 # https://launchpad.net/~avsm/+archive/ubuntu/ocaml42+opam12
-sudo add-apt-repository -y ppa:avsm/ocaml42+opam12
+sudo add-apt-repository -y ppa:avsm/ocaml42+opam12 &
 
 # apt chrome
 # http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
 # exact filename is important since they try to edit this file
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | \
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub |
     sudo apt-key add -
-echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' | \
+echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' |
     sudo tee -a /etc/apt/sources.list.d/google-chrome.list > /dev/null
+
+# BG apt
+wait
 
 # must update anyway (curl used to have problem if we don't update)
 sudo apt-get update
