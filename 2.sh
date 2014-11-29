@@ -1,6 +1,99 @@
 #!/bin/bash
 
-# This script should be idempotent.
+# Stable idempotent part of my config: it rarely changes, and even if it changes
+# you can run the script again with no harmful side-effects.
+
+#### HELPERS ####
+
+download_atom ()
+{
+    local source='/tmp/atom.deb';
+    wget -q -O $source https://atom.io/download/deb
+}
+
+install_atom ()
+{
+    local source='/tmp/atom.deb';
+    sudo dpkg -i $source;
+    rm $source
+}
+
+download_font_noto () {
+    local source='/tmp/Noto.zip';
+    wget -q -O $source https://www.google.com/get/noto/pkgs/Noto.zip
+}
+
+install_font_noto ()
+{
+    local source='/tmp/Noto.zip';
+    local target='/usr/share/fonts/Noto';
+    sudo rm -rf $target;
+    sudo unzip $source -d $target;
+    rm $source
+}
+
+install_font_powerline ()
+{
+    local target='/usr/share/fonts/powerline-fonts';
+    if [ -d $target ]; then
+        ( cd $target; sudo git pull );
+    else
+        sudo git clone -q --depth 1 \
+             https://github.com/Lokaltog/powerline-fonts.git \
+             $target;
+    fi
+}
+
+download_font_source_code_pro ()
+{
+    local source='/tmp/source-code-pro.tgz';
+    wget -q -O $source \
+         https://github.com/adobe-fonts/source-code-pro/archive/1.017R.tar.gz
+}
+
+install_font_source_code_pro ()
+{
+    local source='/tmp/source-code-pro.tgz';
+    local target='/usr/share/fonts/source-code-pro';
+    sudo rm -rf $target;
+    sudo mkdir -p $target;
+    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf';
+    rm $source
+}
+
+download_font_source_sans_pro ()
+{
+    local source='/tmp/source-sans-pro.tgz';
+    wget -q -O $source \
+         https://github.com/adobe-fonts/source-sans-pro/archive/2.010R-ro/1.065R-it.tar.gz
+}
+
+install_font_source_sans_pro ()
+{
+    local source='/tmp/source-sans-pro.tgz';
+    local target='/usr/share/fonts/source-sans-pro';
+    sudo rm -rf $target;
+    sudo mkdir -p $target;
+    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf';
+    rm $source
+}
+
+download_font_source_serif_pro ()
+{
+    local source='/tmp/source-serif-pro.tgz';
+    wget -q -O $source \
+         https://github.com/adobe-fonts/source-serif-pro/archive/1.014R.tar.gz
+}
+
+install_font_source_serif_pro ()
+{
+    local source='/tmp/source-serif-pro.tgz';
+    local target='/usr/share/fonts/source-serif-pro';
+    sudo rm -rf $target;
+    sudo mkdir -p $target;
+    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf';
+    rm $source
+}
 
 #### SANITY CHECK ####
 
@@ -9,14 +102,16 @@ pkill -f /usr/bin/update-manager
 
 #### AUTOPILOT ####
 
+# start custom downloads
+download_atom &
+download_font_noto &
+install_font_powerline & #no separate installer
+download_font_source_code_pro &
+download_font_source_sans_pro &
+download_font_source_serif_pro &
+
 # pull docker baseimage in background (specifically leave out sudo)
-docker pull phusion/baseimage:latest &
-
-# download atom in background
-wget -nv -O /tmp/atom.deb https://atom.io/download/deb &
-
-# download fonts in background
-wget -nv -O /tmp/Noto.zip https://www.google.com/get/noto/pkgs/Noto.zip &
+docker pull phusion/baseimage:latest > /dev/null &
 
 # uninstall some useless stuff here
 # (does not seem productive: leave empty)
@@ -25,33 +120,38 @@ wget -nv -O /tmp/Noto.zip https://www.google.com/get/noto/pkgs/Noto.zip &
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 
-# package management
-sudo apt-get install -y \
-     apt-file \
-     aptitude
-sudo apt-file update & #good to cache, plus will avoid update dialog
+# apt-file, good to cache (do these two together to avoid dialog box)
+sudo apt-get install -y apt-file
+sudo apt-file update > /dev/null &
 
 # tier 1: bap + ida + qira
 sudo apt-get install -y \
+     libgmp-dev      `#zarith` \
+     libncurses5-dev `#ocamlfind` \
+     m4              `#ocamlfind`
      ocaml \
      opam \
-     python-pip `#cdiff`
+     python-pip      `#cdiff`
 sudo apt-get install -y \
      libqtgui4:i386
 sudo apt-get install -y \
      google-chrome-stable \
      socat
 sudo chmod a+x $(locate git-new-workdir)
-sudo ln -s $(locate git-new-workdir) /usr/local/bin
+sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 
-# tier 2: what I consider to be good stuff that everyone wants
+# tier 2: good stuff that everyone should want in my opinion
 sudo apt-get install -y \
+     aptitude \
      augeas-tools \
      bash-doc \
+     curl \
      emacs24 \
      emacs24-el \
      font-manager \
      htop \
+     libxml2-utils `#xmllint`\
+     moreutils     `#sponge` \
      mosh \
      nmap \
      realpath \
@@ -61,27 +161,22 @@ sudo apt-get install -y \
      tig \
      tmux \
      tree \
-     vim-gtk
+     vim-gtk \
+     xml2
 
-# make sure all background jobs are done
+# wait for bg downloads
 wait
 
-# install atom
-sudo dpkg -i /tmp/atom.deb
-rm /tmp/atom.deb
-
-# install Noto
-sudo unzip /tmp/Noto.zip -d /usr/share/fonts/Noto
-sudo chmod -R og=u,og-w /usr/share/fonts/Noto
-rm /tmp/Noto.zip
-
-# install cdiff
-pip install --user cdiff
-[ -d ~/bin ] || mkdir ~/bin
-ln -s ~/.local/bin/cdiff ~/bin
+# install custom stuff
+install_atom
+install_font_noto
+install_font_source_code_pro
+install_font_source_sans_pro
+install_font_source_serif_pro
+sudo chmod -R og=u,og-w /usr/share/fonts
 
 # courtesy
-sudo apt-get autoremove
+sudo apt-get -q autoremove
 sudo updatedb
 
 # final step: zero out empty space before packaging into a box
@@ -91,7 +186,7 @@ time sudo dd if=/dev/zero of=/EMPTY bs=1M
 sudo rm -f /EMPTY
 
 # yay
-cat <<"EOM"
+cat <<"EOS"
 
 Shutdown VM and take a snapshot. Then, in the host, execute these commands where
 "XU64Base" is your chosen name of this VM:
@@ -101,6 +196,6 @@ Shutdown VM and take a snapshot. Then, in the host, execute these commands where
 
 (Remember that copy-and-paste works inside this VM.)
 
-EOM
+EOS
 rm 2.sh
 history -cw
