@@ -88,6 +88,11 @@ sudo ln -sfT /etc/fonts/infinality/styles.conf.avail/win7 \
      /etc/fonts/infinality/conf.d
 sudo sed -i 's/^USE_STYLE="DEFAULT"/USE_STYLE="WINDOWS"/' \
      /etc/profile.d/infinality-settings.sh
+# bugfix: Fontconfig warning:
+# "/etc/fonts/infinality/conf.d/41-repl-os-win.conf", line 148 and 160: Having
+# multiple values in <test> isn't supported and may not work as expected
+sudo sed -i '/<string>Bitstream Vera Sans<\/string>$/d' \
+     /etc/fonts/infinality/conf.d/41-repl-os-win.conf
 
 # docker: install in this round since we need to reboot afterwards
 # http://docs.docker.com/installation/ubuntulinux/
