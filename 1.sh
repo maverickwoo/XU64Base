@@ -61,11 +61,11 @@ read -ep 'Press ENTER to start auto-pilot: '
 
 # add antialiasing
 # https://github.com/achaphiv/ppa-fonts/blob/master/ppa/README.md
-sudo add-apt-repository -y ppa:no1wantdthisname/ppa &
+sudo add-apt-repository -s -y ppa:no1wantdthisname/ppa
 
 # add latest ocaml + opam
 # https://launchpad.net/~avsm/+archive/ubuntu/ocaml42+opam12
-sudo add-apt-repository -y ppa:avsm/ocaml42+opam12 &
+sudo add-apt-repository -s -y ppa:avsm/ocaml42+opam12
 
 # add chrome
 # http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
