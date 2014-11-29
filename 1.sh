@@ -31,6 +31,18 @@ if [ -z "$GUESTLOGIN" ]; then
 else
     sudo adduser "$GUESTLOGIN"
     sudo sed -i '$a'"$GUESTLOGIN"' ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
+    echo
+
+    # force git config
+    echo 'Installing git ...'
+    sudo apt-get install -qq -y git
+    echo
+    # workaround git bug with su: `sudo -u $foo git config --global -l` shocker
+    echo 'Creating your git config:'
+    read -ep 'Enter git user.name (your full name): ' GITUSERNAME
+    sudo su -c 'git config --global user.name "'"$GITUSERNAME"'"' "$GUESTLOGIN"
+    read -ep 'Enter git user.email: ' GITUSEREMAIL
+    sudo su -c 'git config --global user.email "'"$GITUSEREMAIL"'"' "$GUESTLOGIN"
 fi
 echo
 
