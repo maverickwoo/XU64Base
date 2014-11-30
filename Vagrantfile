@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 hostvmshare="/Users/maverick/vmshare"
-guestvmshare="/home/maverick/vmshare"
+guestvmshare="/media/vmshare"
 
 VAGRANTFILE_API_VERSION = "2"
 

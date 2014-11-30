@@ -1,10 +1,12 @@
 #!/bin/bash
+# automate my xfce4 settings
 
 aug ()
 {
     local D=$(dirname $F);
     [ -d "$D" ] || mkdir -p "$D";
     [ -r "$F" ] || touch "$F";
+    echo
     echo "augtool : $F";
     # bug: should be able to pass -s to save, but it fails often, dunno why yet
     augtool -A -L -i -r /
@@ -12,6 +14,17 @@ aug ()
 
 # Personal -> Appearance
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+[ -r "$F" ] || cat <<"EOF" > "$F"
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xsettings" version="1.0">
+  <property name="Net" type="empty">
+  </property>
+  <property name="Xft" type="empty">
+  </property>
+  <property name="Gtk" type="empty">
+  </property>
+</channel>
+EOF
 aug <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
@@ -20,26 +33,43 @@ defnode f /files/$F
 
 # Style
 defnode p \$f/channel[#attribute/name="xsettings"]/property[#attribute/name="Net"]
+rm \$p/property[#attribute/name="ThemeName"]
+set \$p/property[last()+1]/#attribute/name "ThemeName"
 set \$p/property[#attribute/name="ThemeName"]/#attribute/type "string"
 set \$p/property[#attribute/name="ThemeName"]/#attribute/value "Greybird"
 
 # Icons
+rm \$p/property[#attribute/name="IconThemeName"]
+set \$p/property[last()+1]/#attribute/name "IconThemeName"
 set \$p/property[#attribute/name="IconThemeName"]/#attribute/type "string"
 set \$p/property[#attribute/name="IconThemeName"]/#attribute/value "elementary-xfce-darker"
 
 # Fonts
 defnode p \$f/channel[#attribute/name="xsettings"]/property[#attribute/name="Gtk"]
+
+rm \$p/property[#attribute/name="FontName"]
+set \$p/property[last()+1]/#attribute/name "FontName"
 set \$p/property[#attribute/name="FontName"]/#attribute/type "string"
 set \$p/property[#attribute/name="FontName"]/#attribute/value "Source Sans Pro 10"
 defnode p \$f/channel[#attribute/name="xsettings"]/property[#attribute/name="Xft"]
+
+rm \$p/property[#attribute/name="Antialias"]
+set \$p/property[last()+1]/#attribute/name "Antialias"
 set \$p/property[#attribute/name="Antialias"]/#attribute/type "int"
 set \$p/property[#attribute/name="Antialias"]/#attribute/value "1"
+
+rm \$p/property[#attribute/name="HintStyle"]
+set \$p/property[last()+1]/#attribute/name "HintStyle"
 set \$p/property[#attribute/name="HintStyle"]/#attribute/type "string"
 set \$p/property[#attribute/name="HintStyle"]/#attribute/value "hintslight"
+
+rm \$p/property[#attribute/name="RGBA"]
+set \$p/property[last()+1]/#attribute/name "RGBA"
 set \$p/property[#attribute/name="RGBA"]/#attribute/type "string"
 set \$p/property[#attribute/name="RGBA"]/#attribute/value "rgb"
 
 save
+print /augeas//error
 quit
 EOF
 
@@ -57,30 +87,51 @@ setm \$p #attribute/value "/usr/share/xfce4/backdrops/balance.jpg"
 
 # Icons: don't show Home and Filesystem
 defnode p \$f/channel[#attribute/name="xfce4-desktop"]/property[#attribute/name="desktop-icons"]/property[#attribute/name="file-icons"]
+set \$p/property[#attribute/name="show-filesystem"]/#attribute/type "bool"
 set \$p/property[#attribute/name="show-filesystem"]/#attribute/value "false"
+set \$p/property[#attribute/name="show-home"]/#attribute/type "bool"
 set \$p/property[#attribute/name="show-home"]/#attribute/value "false"
 
 save
+print /augeas//error
 quit
 EOF
 
 # Personal -> Light Locker Settings
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
+[ -r "$F" ] || cat <<"EOF" > "$F"
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfce4-power-manager" version="1.0">
+  <property name="xfce4-power-manager" type="empty">
+  </property>
+</channel>
+EOF
 aug <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
 defnode f /files/$F
-defnode p \$f/channel[#attribute/name="xfce4-power-manager"]/property[#attribute/name="xfce4-power-manager"]
 
 # Screensaver: never + never
+defnode p \$f/channel[#attribute/name="xfce4-power-manager"]/property[#attribute/name="xfce4-power-manager"]
+rm \$p/property[#attribute/name="dpms-on-ac-off"]
+set \$p/property[last()+1]/#attribute/name "dpms-on-ac-off"
+set \$p/property[#attribute/name="dpms-on-ac-off"]/#attribute/type "int"
 set \$p/property[#attribute/name="dpms-on-ac-off"]/#attribute/value "0"
+
+rm \$p/property[#attribute/name="dpms-on-ac-sleep"]
+set \$p/property[last()+1]/#attribute/name "dpms-on-ac-sleep"
+set \$p/property[#attribute/name="dpms-on-ac-sleep"]/#attribute/type "int"
 set \$p/property[#attribute/name="dpms-on-ac-sleep"]/#attribute/value "0"
 
 # Locking: off
+rm \$p/property[#attribute/name="dpms-enabled"]
+set \$p/property[last()+1]/#attribute/name "dpms-enabled"
+set \$p/property[#attribute/name="dpms-enabled"]/#attribute/type "bool"
 set \$p/property[#attribute/name="dpms-enabled"]/#attribute/value "false"
 
 save
+print /augeas//error
 quit
 EOF
 
@@ -102,6 +153,7 @@ set \$p/property[#attribute/name="title_font"]/#attribute/type "string"
 set \$p/property[#attribute/name="title_font"]/#attribute/value "Source Sans Pro Semi-Bold 10"
 
 save
+print /augeas//error
 quit
 EOF
 
@@ -131,6 +183,7 @@ set \$p/property[last()]/#attribute/type "string"
 set \$p/property[last()]/#attribute/value "tile_right_key"
 
 save
+print /augeas//error
 quit
 EOF
 
@@ -148,11 +201,19 @@ set \$p/property[#attribute/name="use_compositing"]/#attribute/type "bool"
 set \$p/property[#attribute/name="use_compositing"]/#attribute/value "false"
 
 save
+print /augeas//error
 quit
 EOF
 
 # Hardware -> Keyboard
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/keyboards.xml
+[ -r "$F" ] || cat <<"EOF" > "$F"
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="keyboards" version="1.0">
+  <property name="Default" type="empty">
+  </property>
+</channel>
+EOF
 aug <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
@@ -173,6 +234,7 @@ set \$p/property[last()]/property[2]/#attribute/type "int"
 set \$p/property[last()]/property[2]/#attribute/value "250"
 
 save
+print /augeas//error
 quit
 EOF
 
@@ -199,9 +261,11 @@ set \$p/ColorCursor/#comment "179E9F"
 set \$p/ColorPalette/#comment "000000;#D23361;#319A24;#FF8141;#005DAA;#7437A4;#179E9F;#CCCCC6;#505354;#FF6FCF;#CCFF66;#FFFF66;#66CCFF;#CC66FF;#66FFCC;#F8F8F2"
 
 save
+print /augeas//error
 quit
 EOF
 
 # yay
 echo
 echo "Done. Please logout and re-login."
+echo

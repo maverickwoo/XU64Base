@@ -1,4 +1,4 @@
-!/bin/bash -i
+#!/bin/bash
 
 # This script should finish quickly. The goal is to obtain a VM with Guest
 # Additions as quickly as possible. We postpone the creation of the custom user
