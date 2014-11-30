@@ -1,7 +1,9 @@
-#!/bin/bash -i
+!/bin/bash -i
 
-# This script should finish quickly. The goal is to have a VM with Guest
-# Additions as quickly as possible.
+# This script should finish quickly. The goal is to obtain a VM with Guest
+# Additions as quickly as possible. We postpone the creation of the custom user
+# account to 3.sh so that the image taken after step 2 does not have any other
+# user.
 #
 # All apt adjustments should happen here since 2.sh should be idempotent.
 
@@ -23,29 +25,6 @@ echo vagrant | sudo -S sed -i '$avagrant ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
 echo '[The answer is "vagrant".]'
 echo
 
-# NOPASSWD myself
-echo 'Creating your own user account: (leave empty to skip)'
-read -ep 'Enter username: ' GUESTLOGIN
-if [ -z "$GUESTLOGIN" ]; then
-    echo '(skipped)'
-else
-    sudo adduser "$GUESTLOGIN"
-    sudo sed -i '$a'"$GUESTLOGIN"' ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
-    echo
-
-    # force git config
-    echo 'Installing git ...'
-    sudo apt-get install -qq -y git
-    echo
-    # workaround git bug with su: `sudo -u $foo git config --global -l` shocker
-    echo 'Creating your git config:'
-    read -ep 'Enter git user.name (your full name): ' GITUSERNAME
-    sudo su -c 'git config --global user.name "'"$GITUSERNAME"'"' "$GUESTLOGIN"
-    read -ep 'Enter git user.email: ' GITUSEREMAIL
-    sudo su -c 'git config --global user.email "'"$GITUSEREMAIL"'"' "$GUESTLOGIN"
-fi
-echo
-
 # check Additions CD (downloading ISO is too slow)
 sudo mkdir -p /media/vagrant/VBOX
 sudo chown -R vagrant:vagrant /media/vagrant
@@ -55,7 +34,7 @@ if [ -z "$(find /media/vagrant -maxdepth 1 -type d -name 'VBOX*' -print \
     read -ep 'Press ENTER after you have mounted the Guest Additions CD...'
 fi
 
-read -ep 'Press ENTER to start auto-pilot: '
+read -ep 'Press ENTER to engage auto-pilot for this step: '
 
 #### AUTOPILOT ####
 
@@ -79,11 +58,11 @@ echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' |
 sudo apt-get update
 
 # install Guest Additions early to enable screen resize and copy-and-paste
-sudo apt-get install -q -y dkms
+sudo apt-get install -y dkms
 sudo sh /media/vagrant/VBOX*/VBoxLinuxAdditions.run
 
-# antialias: be nice to my eyes
-sudo apt-get install -q -y fontconfig-infinality libfreetype6
+# antialias: install in this step since we need to re-login afterwards
+sudo apt-get install -y fontconfig-infinality libfreetype6
 sudo ln -sfT /etc/fonts/infinality/styles.conf.avail/win7 \
      /etc/fonts/infinality/conf.d
 sudo sed -i 's/^USE_STYLE="DEFAULT"/USE_STYLE="WINDOWS"/' \
@@ -94,28 +73,25 @@ sudo sed -i 's/^USE_STYLE="DEFAULT"/USE_STYLE="WINDOWS"/' \
 sudo sed -i '/<string>Bitstream Vera Sans<\/string>$/d' \
      /etc/fonts/infinality/conf.d/41-repl-os-win.conf
 
-# docker: install in this round since we need to reboot afterwards
+# docker: install in this step since we need to reboot afterwards
 # http://docs.docker.com/installation/ubuntulinux/
-sudo apt-get install -q -y docker.io
+sudo apt-get install -y docker.io
 sudo sed -ri 's/^(DEFAULT_FORWARD_POLICY)=.*/\1="ACCEPT"/' /etc/default/ufw
 sudo sed -ri \
     's/^(GRUB_CMDLINE_LINUX)=.*/\1="cgroup_enable=memory swapaccount=1"/' \
     /etc/default/grub
 sudo update-grub
 
-# adjust groups (me not in vagrant group => shared folders are read-only to me)
+# vagrant: do this after docker and vboxsf
+echo 'root:vagrant' | sudo chpasswd
 sudo usermod -a -G docker,sudo,vboxsf vagrant
-sudo usermod -a -G docker,sudo,vboxsf $GUESTLOGIN
-
-# vagrant: depends on ssh
-sudo apt-get install -q -y ssh
+sudo apt-get install -y ssh
+sudo sed -i '$aUseDNS no' /etc/ssh/sshd_config
 mkdir ~/.ssh
 chmod 700 ~/.ssh
 wget -q --no-check-certificate -O ~/.ssh/authorized_keys \
     https://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub
 chmod 600 ~/.ssh/authorized_keys
-echo 'root:vagrant' | sudo chpasswd
-sudo sed -i '$aUseDNS no' /etc/ssh/sshd_config
 
 # ubuntu annoyance
 sudo sed -ri 's/^(AVAHI_DAEMON_DETECT_LOCAL)=.*/\1=0/' /etc/default/avahi-daemon
@@ -126,7 +102,7 @@ rm -rf /media/vagrant/VBOX
 
 # yay
 echo
-echo 'Shutdown VM and take a snapshot. Then run the next step.'
+echo 'Shutdown VM and take Snapshot 1. Then run the next step.'
 echo
 rm 1.sh
 history -cw

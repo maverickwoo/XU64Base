@@ -100,6 +100,14 @@ install_font_source_serif_pro ()
 # don't bother updating yet
 pkill -f /usr/bin/update-manager
 
+# who should run this?
+if [ vagrant != "$USER" ]; then
+    echo 'Please run this script as the user "vagrant". Aborting...'
+    exit 1
+fi
+
+read -ep 'Press ENTER to engage auto-pilot for this step: '
+
 #### AUTOPILOT ####
 
 # start custom downloads
@@ -124,36 +132,39 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install -y apt-file
 sudo apt-file update > /dev/null &
 
-# tier 1: bap + ida + qira
+# tier 1: bap + ida + llvm (just building tools) + qira (just exo-docker)
 sudo apt-get install -y \
-     libgmp-dev      `#zarith` \
-     libncurses5-dev `#ocamlfind` \
-     m4              `#ocamlfind`
+     libgmp-dev                `#zarith` \
+     libncurses5-dev           `#ocamlfind` \
+     m4                        `#ocamlfind`
      ocaml \
-     opam \
-     python-pip      `#cdiff`
+     opam
 sudo apt-get install -y \
      libqtgui4:i386
 sudo apt-get install -y \
+     cmake \
+     ninja-build
+sudo apt-get install -y \
      google-chrome-stable \
      socat
-sudo chmod a+x $(locate git-new-workdir)
-sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 
 # tier 2: good stuff that everyone should want in my opinion
 sudo apt-get install -y \
      aptitude \
      augeas-tools \
-     bash-doc \
+     bash-doc                  `#info bash` \
      curl \
      emacs24 \
      emacs24-el \
      font-manager \
+     git \
+     git-svn \
      htop \
-     libxml2-utils `#xmllint`\
-     moreutils     `#sponge` \
+     libxml2-utils             `#xmllint` \
+     moreutils                 `#sponge` \
      mosh \
      nmap \
+     python-pip \
      realpath \
      screen \
      silversearcher-ag \
@@ -163,6 +174,8 @@ sudo apt-get install -y \
      tree \
      vim-gtk \
      xml2
+sudo chmod a+x $(locate git-new-workdir)
+sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 
 # wait for bg downloads
 wait
@@ -186,16 +199,16 @@ time sudo dd if=/dev/zero of=/EMPTY bs=1M
 sudo rm -f /EMPTY
 
 # yay
-cat <<"EOS"
+cat <<"EOF"
 
-Shutdown VM and take a snapshot. Then, in the host, execute these commands where
-"XU64Base" is your chosen name of this VM:
+Shutdown VM and take Snapshot 2. Then, in the *host*, execute these commands
+where "XU64Base" is your chosen name of this VM:
 
   yourself@host$ vagrant package --base XU64Base
   yourself@host$ vagrant box add --force versioning.json
 
 (Remember that copy-and-paste works inside this VM.)
 
-EOS
+EOF
 rm 2.sh
 history -cw
