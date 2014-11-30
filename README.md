@@ -45,25 +45,19 @@ script `1.sh`.
 vagrant@VM$ ./1.sh
 ```
 
-The script starts with a *manual* portion, which will:
-1. create a user for you, and
-2. install VirtualBox Guest Additions.
-
-After you have pressed Enter to close the Guest Additions installer, the script
-will enter its *automatic* portion. You can sit back and relax for a minute.
-
-When the script finishes, it will inform you to shutdown the VM and take a
-snapshot.
+The script is 100% automatic after the initial confirmation. When the script
+finishes, it will inform you to shutdown the VM and take a snapshot.
 
 ## Step 2: Second Boot
 
-Boot the VM and login as yourself. Then run the script `2.sh`.
+Boot the VM and login as `vagrant` with the password `vagrant`. Then run the
+script `2.sh`.
 
 ```
-yourself@VM$ ./2.sh
+vagrant@VM$ ./2.sh
 ```
 
-The script is entirely automatic. Its running time depends on your network
+The script is 100% automatic. Its running time depends on your network
 connection and the size of your disk image. 10 minutes would be a good guess.
 
 __IMPORTANT:__ While you are waiting for the script to finish, edit
