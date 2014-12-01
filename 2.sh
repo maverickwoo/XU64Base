@@ -136,17 +136,22 @@ sudo apt-file update > /dev/null &
 sudo apt-get install -y \
      libgmp-dev                `#zarith` \
      libncurses5-dev           `#ocamlfind` \
-     m4                        `#ocamlfind`
+     llvm \
+     m4                        `#ocamlfind` \
      ocaml \
-     opam
+     opam \
+     `#end`
 sudo apt-get install -y \
-     libqtgui4:i386
+     libqtgui4:i386 \
+     `#end`
 sudo apt-get install -y \
      cmake \
-     ninja-build
+     ninja-build \
+     `#end`
 sudo apt-get install -y \
      google-chrome-stable \
-     socat
+     socat \
+     `#end`
 
 # tier 2: good stuff that everyone should want in my opinion
 sudo apt-get install -y \
