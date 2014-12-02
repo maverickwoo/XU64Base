@@ -1,8 +1,18 @@
 #!/bin/bash
-# automate my xfce4 settings
+# automate my xfce4 settings idempotently
 
-aug ()
+init_file ()
 {
+    local F="$1"
+    if [ ! -r "$F" ]; then
+        mkdir $(dirname "$F");
+        cat > "$F";
+    fi
+}
+
+aug_file ()
+{
+    local F="$1";
     local D=$(dirname $F);
     [ -d "$D" ] || mkdir -p "$D";
     [ -r "$F" ] || touch "$F";
@@ -12,9 +22,15 @@ aug ()
     augtool -A -L -i -r /
 }
 
+xml_clean ()
+{
+    local F="$1";
+    xmllint --format "$F" | sponge "$F"
+}
+
 # Personal -> Appearance
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
-[ -r "$F" ] || cat <<"EOF" > "$F"
+init_file $F <<"EOF"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xsettings" version="1.0">
   <property name="Net" type="empty">
@@ -25,7 +41,7 @@ F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
   </property>
 </channel>
 EOF
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
@@ -72,10 +88,11 @@ save
 print /augeas//error
 quit
 EOF
+xml_clean $F
 
 # Personal -> Desktop
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
@@ -96,17 +113,18 @@ save
 print /augeas//error
 quit
 EOF
+xml_clean $F
 
 # Personal -> Light Locker Settings
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
-[ -r "$F" ] || cat <<"EOF" > "$F"
+init_file $F <<"EOF"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xfce4-power-manager" version="1.0">
   <property name="xfce4-power-manager" type="empty">
   </property>
 </channel>
 EOF
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
@@ -128,7 +146,30 @@ set \$p/property[#attribute/name="dpms-on-ac-sleep"]/#attribute/value "0"
 rm \$p/property[#attribute/name="dpms-enabled"]
 set \$p/property[last()+1]/#attribute/name "dpms-enabled"
 set \$p/property[#attribute/name="dpms-enabled"]/#attribute/type "bool"
-set \$p/property[#attribute/name="dpms-enabled"]/#attribute/value "false"
+set \$p/property[#attribute/name="dpms-enabled"]/#attribute/value "true"
+
+save
+print /augeas//error
+quit
+EOF
+xml_clean $F
+
+F=~/.config/autostart/light-locker.desktop
+init_file $F <<EOF
+[Desktop Entry]
+Type=Application
+Name=Screen Locker
+Exec=light-locker --lock-after-screensaver=10 --lock-on-suspend --no-late-locking
+EOF
+aug_file $F <<EOF
+set /augeas/load/ini/incl "$F"
+set /augeas/load/ini/lens "Puppet.lns"
+load
+defnode f /files/$F
+defnode p \$f/"Desktop Entry"
+
+# Locking: Off, When the screensaver is activated, 1 second, Lock on suspend
+set \$p/Exec "light-locker --lock-after-screensaver=1 --lock-on-suspend --no-late-locking"
 
 save
 print /augeas//error
@@ -137,7 +178,7 @@ EOF
 
 # Personal -> Window Manager: Part 1
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
@@ -148,18 +189,27 @@ defnode p \$f/channel[#attribute/name="xfwm4"]/property[#attribute/name="general
 set \$p/property[#attribute/name="theme"]/#attribute/type "string"
 set \$p/property[#attribute/name="theme"]/#attribute/value "Albatross"
 
-# Style -> Title font
+# Style -> Title font, Left alignment
 set \$p/property[#attribute/name="title_font"]/#attribute/type "string"
 set \$p/property[#attribute/name="title_font"]/#attribute/value "Source Sans Pro Semi-Bold 10"
+set \$p/property[#attribute/name="title_alignment"]/#attribute/type "string"
+set \$p/property[#attribute/name="title_alignment"]/#attribute/value "left"
+
+# Advanced -> Windows snapping: both
+set \$p/property[#attribute/name="snap_to_border"]/#attribute/type "bool"
+set \$p/property[#attribute/name="snap_to_border"]/#attribute/value "true"
+set \$p/property[#attribute/name="snap_to_windows"]/#attribute/type "bool"
+set \$p/property[#attribute/name="snap_to_windows"]/#attribute/value "true"
 
 save
 print /augeas//error
 quit
 EOF
+xml_clean $F
 
 # Personal -> Window Manager: Part 2
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
@@ -168,15 +218,29 @@ defnode f /files/$F
 # Keyboard
 defnode p \$f/channel[#attribute/name="xfce4-keyboard-shortcuts"]/property[#attribute/name="xfwm4"]/property[#attribute/name="custom"]
 
-# Tile window to the left
-rm \$p/property[#attribute/name="&lt;Super&gt;Left"]
+# Switch window for same application: Alt \`
+rm \$p/property[#attribute/value="switch_window_key"]
+clear \$p/property[last()+1]
+set \$p/property[last()]/#attribute/name "&lt;Alt&gt;grave"
+set \$p/property[last()]/#attribute/type "string"
+set \$p/property[last()]/#attribute/value "switch_window_key"
+
+# Maximize Window: Alt F10
+rm \$p/property[#attribute/value="maximize_window_key"]
+clear \$p/property[last()+1]
+set \$p/property[last()]/#attribute/name "&lt;Alt&gt;F10"
+set \$p/property[last()]/#attribute/type "string"
+set \$p/property[last()]/#attribute/value "maximize_window_key"
+
+# Tile window to the left: Super Left
+rm \$p/property[#attribute/value="tile_left_key"]
 clear \$p/property[last()+1]
 set \$p/property[last()]/#attribute/name "&lt;Super&gt;Left"
 set \$p/property[last()]/#attribute/type "string"
 set \$p/property[last()]/#attribute/value "tile_left_key"
 
-# Tile window to the right
-rm \$p/property[#attribute/name="&lt;Super&gt;Right"]
+# Tile window to the right: Super Right
+rm \$p/property[#attribute/value="tile_right_key"]
 clear \$p/property[last()+1]
 set \$p/property[last()]/#attribute/name "&lt;Super&gt;Right"
 set \$p/property[last()]/#attribute/type "string"
@@ -186,10 +250,11 @@ save
 print /augeas//error
 quit
 EOF
+xml_clean $F
 
 # Personal -> Window Manager Tweaks
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
@@ -204,17 +269,18 @@ save
 print /augeas//error
 quit
 EOF
+xml_clean $F
 
 # Hardware -> Keyboard
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/keyboards.xml
-[ -r "$F" ] || cat <<"EOF" > "$F"
+init_file $F <<"EOF"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="keyboards" version="1.0">
   <property name="Default" type="empty">
   </property>
 </channel>
 EOF
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
@@ -237,10 +303,11 @@ save
 print /augeas//error
 quit
 EOF
+xml_clean $F
 
 # xfce4-terminal -> Edit -> Preferences
 F=~/.config/xfce4/terminal/terminalrc
-aug <<EOF
+aug_file $F <<EOF
 set /augeas/load/ini/incl "$F"
 set /augeas/load/ini/lens "Puppet.lns"
 load

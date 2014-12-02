@@ -21,9 +21,8 @@ fi
 #### INTERACTIVE ####
 
 # NOPASSWD vagrant as the very first step to avoid future passowrd prompts
-echo vagrant | sudo -S sed -i '$avagrant ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
-echo '[The answer is "vagrant".]'
-echo
+echo vagrant |
+    sudo -S sed -i '$avagrant ALL=(ALL) NOPASSWD: ALL' /etc/sudoers >& /dev/null
 
 # check Additions CD (downloading ISO is too slow)
 sudo mkdir -p /media/vagrant/VBOX
@@ -33,8 +32,6 @@ if [ -z "$(find /media/vagrant -maxdepth 1 -type d -name 'VBOX*' -print \
            -quit)" ]; then
     read -ep 'Press ENTER after you have mounted the Guest Additions CD...'
 fi
-
-read -ep 'Press ENTER to engage auto-pilot for this step: '
 
 #### AUTOPILOT ####
 

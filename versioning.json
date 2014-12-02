@@ -2,10 +2,10 @@
     "name": "maverickwoo/xubuntu64-trusty",
     "description": "Maverick's Xubuntu64 14.04 LTS (Trusty) Desktop",
     "versions": [{
-        "version": "2014.11.30",
+        "version": "2014.12.02",
         "providers": [{
             "name": "virtualbox",
-            "url": "package.box"
+            "url": "file:///tmp/package.box"
         }]
     }]
 }

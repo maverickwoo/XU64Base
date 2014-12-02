@@ -106,8 +106,6 @@ if [ vagrant != "$USER" ]; then
     exit 1
 fi
 
-read -ep 'Press ENTER to engage auto-pilot for this step: '
-
 #### AUTOPILOT ####
 
 # start custom downloads
@@ -209,7 +207,7 @@ cat <<"EOF"
 Shutdown VM and take Snapshot 2. Then, in the *host*, execute these commands
 where "XU64Base" is your chosen name of this VM:
 
-  yourself@host$ vagrant package --base XU64Base
+  yourself@host$ vagrant package --base XU64Base --output /tmp/package.box
   yourself@host$ vagrant box add --force versioning.json
 
 (Remember that copy-and-paste works inside this VM.)
