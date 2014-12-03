@@ -5,8 +5,9 @@ init_file ()
 {
     local F="$1"
     if [ ! -r "$F" ]; then
-        mkdir $(dirname "$F");
-        cat > "$F";
+        local D=$(dirname $F);
+        [ -d "$D" ] || mkdir -p "$D";
+        cat >| "$F";
     fi
 }
 
@@ -142,12 +143,6 @@ set \$p/property[last()+1]/#attribute/name "dpms-on-ac-sleep"
 set \$p/property[#attribute/name="dpms-on-ac-sleep"]/#attribute/type "int"
 set \$p/property[#attribute/name="dpms-on-ac-sleep"]/#attribute/value "0"
 
-# Locking: off
-rm \$p/property[#attribute/name="dpms-enabled"]
-set \$p/property[last()+1]/#attribute/name "dpms-enabled"
-set \$p/property[#attribute/name="dpms-enabled"]/#attribute/type "bool"
-set \$p/property[#attribute/name="dpms-enabled"]/#attribute/value "true"
-
 save
 print /augeas//error
 quit
@@ -159,7 +154,7 @@ init_file $F <<EOF
 [Desktop Entry]
 Type=Application
 Name=Screen Locker
-Exec=light-locker --lock-after-screensaver=10 --lock-on-suspend --no-late-locking
+Exec=light-locker --lock-after-screensaver=1 --lock-on-suspend --no-late-locking
 EOF
 aug_file $F <<EOF
 set /augeas/load/ini/incl "$F"
@@ -277,6 +272,11 @@ init_file $F <<"EOF"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="keyboards" version="1.0">
   <property name="Default" type="empty">
+    <property name="Numlock" type="bool" value="false"/>
+    <property name="KeyRepeat" type="empty">
+      <property name="Rate" type="int" value="25"/>
+      <property name="Delay" type="int" value="250"/>
+    </property>
   </property>
 </channel>
 EOF
