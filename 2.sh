@@ -95,6 +95,20 @@ install_font_source_serif_pro ()
     rm $source
 }
 
+download_lmutil ()
+{
+    local source='/tmp/lmutil.tgz';
+    wget -q -O $source \
+         https://www.hex-rays.com/products/ida/support/flexlm/lmutil-x64_lsb-11.12.1.0v6.tar.gz
+}
+
+install_lmutil ()
+{
+    local source='/tmp/lmutil.tgz';
+    local target='/usr/local/bin';
+    sudo tar -C $target -zxvf $source
+}
+
 #### SANITY CHECK ####
 
 # don't bother updating yet
@@ -115,6 +129,7 @@ install_font_powerline & #no separate installer
 download_font_source_code_pro &
 download_font_source_sans_pro &
 download_font_source_serif_pro &
+download_lmutil &
 
 # pull docker baseimage in background (specifically leave out sudo)
 docker pull phusion/baseimage:latest > /dev/null &
@@ -190,6 +205,7 @@ install_font_source_code_pro
 install_font_source_sans_pro
 install_font_source_serif_pro
 sudo chmod -R og=u,og-w /usr/share/fonts
+install_lmutil
 
 # courtesy
 sudo apt-get -q autoremove
