@@ -81,7 +81,8 @@ sudo update-grub
 
 # vagrant: do this after docker and vboxsf
 echo 'root:vagrant' | sudo chpasswd
-sudo usermod -a -G docker,sudo,vboxsf vagrant
+sudo usermod -a -G docker,root,sudo,vboxsf vagrant
+sudo chmod g+w /etc/profile.d
 sudo apt-get install -y ssh
 sudo sed -i '$aUseDNS no' /etc/ssh/sshd_config
 mkdir ~/.ssh
@@ -101,5 +102,5 @@ rm -rf /media/vagrant/VBOX
 echo
 echo 'Shutdown VM and take Snapshot 1. Then run the next step.'
 echo
-rm 1.sh
+rm -f 1.sh
 history -cw
