@@ -114,12 +114,6 @@ install_lmutil ()
 # don't bother updating yet
 pkill -f /usr/bin/update-manager
 
-# who should run this?
-if [ vagrant != "$USER" ]; then
-    echo 'Please run this script as the user "vagrant". Aborting...'
-    exit 1
-fi
-
 #### AUTOPILOT ####
 
 # start custom downloads
@@ -208,17 +202,19 @@ sudo chmod -R og=u,og-w /usr/share/fonts
 install_lmutil
 
 # courtesy
-sudo apt-get -q autoremove
+sudo apt-get -q -y autoremove
 sudo updatedb
 
-# final step: zero out empty space before packaging into a box
-echo 'Zeroing empty space to reduce box size...'
-echo '(can take several minutes on a large disk image)'
-time sudo dd if=/dev/zero of=/EMPTY bs=1M
-sudo rm -f /EMPTY
+if [ vagrant == "$USER" ]; then
 
-# yay
-cat <<"EOF"
+    # final step: zero out empty space before packaging into a box
+    echo 'Zeroing empty space to reduce box size...'
+    echo '(can take several minutes on a large disk image)'
+    time sudo dd if=/dev/zero of=/EMPTY bs=1M
+    sudo rm -f /EMPTY
+
+    # yay
+    cat <<"EOF"
 
 Shutdown VM and take Snapshot 2. Then, in the *host*, execute these commands
 where "XU64Base" is your chosen name of this VM:
@@ -229,5 +225,7 @@ where "XU64Base" is your chosen name of this VM:
 (Remember that copy-and-paste works inside this VM.)
 
 EOF
-rm 2.sh
-history -cw
+    rm -f 2.sh
+    history -cw
+
+fi
