@@ -227,6 +227,13 @@ set \$p/property[last()]/#attribute/name "&lt;Alt&gt;F10"
 set \$p/property[last()]/#attribute/type "string"
 set \$p/property[last()]/#attribute/value "maximize_window_key"
 
+# Tile window to the bottom: Super Down
+rm \$p/property[#attribute/value="tile_down_key"]
+clear \$p/property[last()+1]
+set \$p/property[last()]/#attribute/name "&lt;Super&gt;Down"
+set \$p/property[last()]/#attribute/type "string"
+set \$p/property[last()]/#attribute/value "tile_down_key"
+
 # Tile window to the left: Super Left
 rm \$p/property[#attribute/value="tile_left_key"]
 clear \$p/property[last()+1]
@@ -240,6 +247,13 @@ clear \$p/property[last()+1]
 set \$p/property[last()]/#attribute/name "&lt;Super&gt;Right"
 set \$p/property[last()]/#attribute/type "string"
 set \$p/property[last()]/#attribute/value "tile_right_key"
+
+# Tile window to the top: Super Up
+rm \$p/property[#attribute/value="tile_up_key"]
+clear \$p/property[last()+1]
+set \$p/property[last()]/#attribute/name "&lt;Super&gt;Up"
+set \$p/property[last()]/#attribute/type "string"
+set \$p/property[last()]/#attribute/value "tile_up_key"
 
 save
 print /augeas//error
