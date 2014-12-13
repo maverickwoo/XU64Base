@@ -18,6 +18,21 @@ install_atom ()
     rm $source
 }
 
+download_docker_ssh ()
+{
+    local source='/tmp/docker_ssh.tar.gz';
+    wget -q -O $source \
+         https://github.com/phusion/baseimage-docker/archive/master.tar.gz
+}
+
+install_docker_ssh ()
+{
+    local source='/tmp/docker_ssh.tar.gz';
+    tar xzf $source;
+    sudo baseimage-docker-master/install-tools.sh;
+    rm -rf $source baseimage-docker-master
+}
+
 download_font_noto () {
     local source='/tmp/Noto.zip';
     wget -q -O $source https://www.google.com/get/noto/pkgs/Noto.zip
@@ -32,7 +47,7 @@ install_font_noto ()
     rm $source
 }
 
-install_font_powerline ()
+download_font_powerline ()
 {
     local target='/usr/share/fonts/powerline-fonts';
     if [ -d $target ]; then
@@ -43,6 +58,8 @@ install_font_powerline ()
              $target;
     fi
 }
+
+install_font_powerline () { true; }
 
 download_font_source_code_pro ()
 {
@@ -118,8 +135,9 @@ pkill -f /usr/bin/update-manager
 
 # start custom downloads
 download_atom &
+download_docker_ssh &
 download_font_noto &
-install_font_powerline & #no separate installer
+download_font_powerline &
 download_font_source_code_pro &
 download_font_source_sans_pro &
 download_font_source_serif_pro &
@@ -172,20 +190,25 @@ sudo apt-get install -y \
      git \
      git-svn \
      htop \
+     kdiff3-qt \
      libxml2-utils             `#xmllint` \
+     mercurial \
      moreutils                 `#sponge` \
      mosh \
+     ncdu \
      nmap \
      python-pip \
      realpath \
      screen \
      silversearcher-ag \
      ssh \
+     subversion \
      tig \
      tmux \
      tree \
      vim-gtk \
-     xml2
+     xml2 \
+     `#end`
 sudo chmod a+x $(locate git-new-workdir)
 sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 
@@ -194,12 +217,14 @@ wait
 
 # install custom stuff
 install_atom
+install_docker_ssh
 install_font_noto
+install_font_powerline
 install_font_source_code_pro
 install_font_source_sans_pro
 install_font_source_serif_pro
-sudo chmod -R og=u,og-w /usr/share/fonts
 install_lmutil
+sudo chmod -R og=u,og-w /usr/share/fonts
 
 # courtesy
 sudo apt-get -q -y autoremove
