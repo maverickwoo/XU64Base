@@ -192,6 +192,7 @@ sudo apt-get install -y \
      htop \
      kdiff3-qt \
      libxml2-utils             `#xmllint` \
+     lsb \                     `#lmutil` \
      mercurial \
      moreutils                 `#sponge` \
      mosh \
