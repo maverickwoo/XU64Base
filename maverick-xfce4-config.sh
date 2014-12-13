@@ -133,15 +133,26 @@ defnode f /files/$F
 
 # Screensaver: never + never
 defnode p \$f/channel[#attribute/name="xfce4-power-manager"]/property[#attribute/name="xfce4-power-manager"]
+rm \$p/property[#attribute/name="dpms-enabled"]
+set \$p/property[last()+1]/#attribute/name "dpms-enabled"
+set \$p/property[#attribute/name="dpms-enabled"]/#attribute/type "bool"
+set \$p/property[#attribute/name="dpms-enabled"]/#attribute/value "true"
 rm \$p/property[#attribute/name="dpms-on-ac-off"]
 set \$p/property[last()+1]/#attribute/name "dpms-on-ac-off"
 set \$p/property[#attribute/name="dpms-on-ac-off"]/#attribute/type "int"
 set \$p/property[#attribute/name="dpms-on-ac-off"]/#attribute/value "0"
-
 rm \$p/property[#attribute/name="dpms-on-ac-sleep"]
 set \$p/property[last()+1]/#attribute/name "dpms-on-ac-sleep"
 set \$p/property[#attribute/name="dpms-on-ac-sleep"]/#attribute/type "int"
 set \$p/property[#attribute/name="dpms-on-ac-sleep"]/#attribute/value "0"
+rm \$p/property[#attribute/name="dpms-on-battery-off"]
+set \$p/property[last()+1]/#attribute/name "dpms-on-battery-off"
+set \$p/property[#attribute/name="dpms-on-battery-off"]/#attribute/type "int"
+set \$p/property[#attribute/name="dpms-on-battery-off"]/#attribute/value "0"
+rm \$p/property[#attribute/name="dpms-on-battery-sleep"]
+set \$p/property[last()+1]/#attribute/name "dpms-on-battery-sleep"
+set \$p/property[#attribute/name="dpms-on-battery-sleep"]/#attribute/type "int"
+set \$p/property[#attribute/name="dpms-on-battery-sleep"]/#attribute/value "0"
 
 save
 print /augeas//error
@@ -171,6 +182,27 @@ print /augeas//error
 quit
 EOF
 
+F=~/.config/autostart/screensaver-settings.desktop
+init_file $F <<EOF
+[Desktop Entry]
+Name=Screensaver
+Exec=xset s 0 dpms 0 0 0
+EOF
+aug_file $F <<EOF
+set /augeas/load/ini/incl "$F"
+set /augeas/load/ini/lens "Puppet.lns"
+load
+defnode f /files/$F
+defnode p \$f/"Desktop Entry"
+
+# disable screensaver (we want to allow screensaver to trigger light-locker)
+set \$p/Exec "xset s 0 dpms 0 0 0"
+
+save
+print /augeas//error
+quit
+EOF
+
 # Personal -> Window Manager: Part 1
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
 aug_file $F <<EOF
@@ -178,9 +210,9 @@ set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
 defnode f /files/$F
+defnode p \$f/channel[#attribute/name="xfwm4"]/property[#attribute/name="general"]
 
 # Style -> Theme
-defnode p \$f/channel[#attribute/name="xfwm4"]/property[#attribute/name="general"]
 set \$p/property[#attribute/name="theme"]/#attribute/type "string"
 set \$p/property[#attribute/name="theme"]/#attribute/value "Albatross"
 
@@ -268,11 +300,21 @@ set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
 defnode f /files/$F
+defnode p \$f/channel[#attribute/name="xfwm4"]/property[#attribute/name="general"]
+
+# Focus: prevent stealing
+rm \$p/property[#attribute/name="prevent_focus_stealing"]
+clear \$p/property[last()+1]
+set \$p/property[last()]/#attribute/name "prevent_focus_stealing"
+set \$p/property[last()]/#attribute/type "bool"
+set \$p/property[last()]/#attribute/value "true"
 
 # Compositor: disable
-defnode p \$f/channel[#attribute/name="xfwm4"]/property[#attribute/name="general"]
-set \$p/property[#attribute/name="use_compositing"]/#attribute/type "bool"
-set \$p/property[#attribute/name="use_compositing"]/#attribute/value "false"
+rm \$p/property[#attribute/name="use_compositing"]
+clear \$p/property[last()+1]
+set \$p/property[last()]/#attribute/name "use_compositing"
+set \$p/property[last()]/#attribute/type "bool"
+set \$p/property[last()]/#attribute/value "false"
 
 save
 print /augeas//error
