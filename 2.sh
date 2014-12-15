@@ -189,25 +189,30 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install -y apt-file
 sudo apt-file update > /dev/null &
 
-# tier 1: bap + ida + llvm (just building tools) + qira (just exo-docker)
+# tier 1: bap + ida + llvm (building tools) + qira (just exo-docker) + cross
 sudo apt-get install -y \
+     `#bap` \
      libgmp-dev                `#zarith` \
      libncurses5-dev           `#ocamlfind` \
      llvm \
      m4                        `#ocamlfind` \
      ocaml \
      opam \
-     `#end`
-sudo apt-get install -y \
+     `#ida` \
      libqtgui4:i386 \
-     `#end`
-sudo apt-get install -y \
+     `#llvm` \
      cmake \
      ninja-build \
-     `#end`
-sudo apt-get install -y \
+     `#qira` \
      google-chrome-stable \
      socat \
+     `#cross` \
+     g++-4.8-multilib \
+     g++-aarch64-linux-gnu \
+     g++-arm-linux-gnueabihf \
+     g++-powerpc-linux-gnu \
+     g++-powerpc64le-linux-gnu \
+     gcc-doc \
      `#end`
 
 # tier 2: good stuff that everyone should want in my opinion
@@ -219,12 +224,13 @@ sudo apt-get install -y \
      emacs24 \
      emacs24-el \
      font-manager \
+     gawk \
      git \
      git-svn \
      htop \
      kdiff3-qt \
      libxml2-utils             `#xmllint` \
-     lsb \                     `#lmutil` \
+     lsb                       `#lmutil` \
      mercurial \
      moreutils                 `#sponge` \
      mosh \
@@ -236,6 +242,7 @@ sudo apt-get install -y \
      silversearcher-ag \
      ssh \
      subversion \
+     terminator \
      tig \
      tmux \
      tree \
