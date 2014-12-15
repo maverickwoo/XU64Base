@@ -5,6 +5,16 @@
 
 #### HELPERS ####
 
+calm_down ()
+{
+    echo 'Calming down...'
+    # use awk (gawk may not be installed yet)
+    while [ $(uptime | awk -F':|,| ' '{print int($(NF-4))}') -ge ${1:-10} ]; do
+        uptime
+        sleep ${2:-5}
+    done
+}
+
 download_atom ()
 {
     local source='/tmp/atom.deb';
@@ -253,7 +263,9 @@ sudo chmod a+x $(locate git-new-workdir)
 sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 
 # wait for bg downloads
+echo 'Waiting for background downloads to finish...'
 wait
+calm_down
 
 # install custom stuff
 install_atom
@@ -268,22 +280,24 @@ install_lmutil
 sudo chmod -R og=u,og-w /usr/share/fonts
 
 # courtesy
-sudo apt-get -q -y autoremove
+sudo apt-get -y autoremove
 sudo updatedb
 
 if [ vagrant == "$USER" ]; then
 
+    calm_down
+
     # final step: zero out empty space before packaging into a box
     echo 'Zeroing empty space to reduce box size...'
     echo '(can take several minutes on a large disk image)'
-    time sudo dd if=/dev/zero of=/EMPTY bs=1M
+    time sudo nice dd if=/dev/zero of=/EMPTY bs=1M
     sudo rm -f /EMPTY
 
     # yay
     cat <<"EOF"
 
 Shutdown VM and take Snapshot 2. Then, in the *host*, execute these commands
-where "XU64Base" is your chosen name of this VM:
+by substituting "XU64Base" with the name of this VM:
 
   yourself@host$ vagrant package --base XU64Base --output /tmp/package.box
   yourself@host$ vagrant box add --force versioning.json

@@ -2,10 +2,10 @@
 
 # This script should finish quickly. The goal is to obtain a VM with Guest
 # Additions as quickly as possible. We postpone the creation of the custom user
-# account to 3.sh so that the image taken after step 2 does not have any other
+# account to 3.sh so that the image taken after 2.sh does not have any other
 # user.
 #
-# All apt adjustments should happen here since 2.sh should be idempotent.
+# 1.sh should contain all non-idempotent operations; 2.sh must be idempotent.
 
 #### SANITY CHECK ####
 

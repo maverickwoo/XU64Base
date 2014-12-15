@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # VM config: 1cpu+512MB+256GB (will override first two with vagrant)
 # General->Advanced: bidirectional + bidirectional
