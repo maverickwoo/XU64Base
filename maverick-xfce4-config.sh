@@ -203,7 +203,7 @@ print /augeas//error
 quit
 EOF
 
-# Personal -> Window Manager: Part 1
+# Personal -> Window Manager
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
 aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
@@ -234,15 +234,13 @@ quit
 EOF
 xml_clean $F
 
-# Personal -> Window Manager: Part 2
+# Personal -> Window Manager -> Keyboard
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 aug_file $F <<EOF
 set /augeas/load/xml/incl "$F"
 set /augeas/load/xml/lens "Xml.lns"
 load
 defnode f /files/$F
-
-# Keyboard
 defnode p \$f/channel[#attribute/name="xfce4-keyboard-shortcuts"]/property[#attribute/name="xfwm4"]/property[#attribute/name="custom"]
 
 # Switch window for same application: Alt \`
@@ -322,7 +320,7 @@ quit
 EOF
 xml_clean $F
 
-# Hardware -> Keyboard
+# Hardware -> Keyboard -> Behavior
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/keyboards.xml
 init_file $F <<"EOF"
 <?xml version="1.0" encoding="UTF-8"?>
@@ -342,7 +340,7 @@ set /augeas/load/xml/lens "Xml.lns"
 load
 defnode f /files/$F
 
-# Behavior -> Typing Settings
+# Typing Settings
 defnode p \$f/channel[#attribute/name="keyboards"]/property[#attribute/name="Default"]
 rm \$p/property[#attribute/name="KeyRepeat"]
 clear \$p/property[last()+1]
@@ -354,6 +352,39 @@ set \$p/property[last()]/property[1]/#attribute/value "25"
 set \$p/property[last()]/property[2]/#attribute/name "Delay"
 set \$p/property[last()]/property[2]/#attribute/type "int"
 set \$p/property[last()]/property[2]/#attribute/value "250"
+
+save
+print /augeas//error
+quit
+EOF
+xml_clean $F
+
+# Hardware -> Keyboard -> Application Shortcuts
+F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+aug_file $F <<EOF
+set /augeas/load/xml/incl "$F"
+set /augeas/load/xml/lens "Xml.lns"
+load
+defnode f /files/$F
+defnode p \$f/channel[#attribute/name="xfce4-keyboard-shortcuts"]/property[#attribute/name="commands"]/property[#attribute/name="custom"]
+
+rm \$p/property[#attribute/name="&lt;Alt&gt;F1"]
+rm \$p/property[#attribute/name="&lt;Alt&gt;F2"]
+rm \$p/property[#attribute/name="&lt;Alt&gt;F3"]
+rm \$p/property[#attribute/name="&lt;Primary&gt;&lt;Alt&gt;Delete"]
+rm \$p/property[#attribute/name="&lt;Primary&gt;&lt;Alt&gt;Escape"]
+rm \$p/property[#attribute/name="&lt;Primary&gt;&lt;Alt&gt;t"]
+rm \$p/property[#attribute/name="&lt;Super&gt;1"]
+rm \$p/property[#attribute/name="&lt;Super&gt;2"]
+rm \$p/property[#attribute/name="&lt;Super&gt;3"]
+rm \$p/property[#attribute/name="&lt;Super&gt;4"]
+rm \$p/property[#attribute/name="&lt;Super&gt;e"]
+rm \$p/property[#attribute/name="&lt;Super&gt;f"]
+rm \$p/property[#attribute/name="&lt;Super&gt;m"]
+rm \$p/property[#attribute/name="&lt;Super&gt;p"]
+rm \$p/property[#attribute/name="&lt;Super&gt;r"]
+rm \$p/property[#attribute/name="&lt;Super&gt;t"]
+rm \$p/property[#attribute/name="&lt;Super&gt;w"]
 
 save
 print /augeas//error
