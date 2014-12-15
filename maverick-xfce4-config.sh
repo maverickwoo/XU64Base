@@ -386,6 +386,13 @@ rm \$p/property[#attribute/name="&lt;Super&gt;r"]
 rm \$p/property[#attribute/name="&lt;Super&gt;t"]
 rm \$p/property[#attribute/name="&lt;Super&gt;w"]
 
+# Terminator: Super N
+rm \$p/property[#attribute/name="&lt;Super&gt;n"]
+clear \$p/property[last()+1]
+set \$p/property[last()]/#attribute/name "&lt;Super&gt;n"
+set \$p/property[last()]/#attribute/type "string"
+set \$p/property[last()]/#attribute/value "/usr/bin/terminator"
+
 save
 print /augeas//error
 quit
