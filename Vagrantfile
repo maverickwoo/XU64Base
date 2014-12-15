@@ -1,7 +1,25 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require 'find'
+def provision(config, from, to)
+  require 'find'
+  from.each { |dir|
+    fulldir = File.expand_path(File.dirname(__FILE__)) + '/' + dir
+    if File.directory?(fulldir)
+      Dir.chdir(fulldir) do
+        Find.find('.') do |p|
+          if !File.directory?(p)
+
+            config.vm.provision 'file', run: 'always',
+                                source: fulldir + '/' + p,
+                                destination: to + '/' + p
+
+          end
+        end
+      end
+    end
+  }
+end
 
 Vagrant.configure('2') do |config|
 
@@ -23,20 +41,6 @@ Vagrant.configure('2') do |config|
     config.vm.synced_folder h, g
   }
 
-  ['provision/public/root', 'provision/private/root'].each { |r|
-    f = File.expand_path(File.dirname(__FILE__)) + '/' + r
-    Dir.chdir(f) do
-      Find.find('.') do |p|
-        if !File.directory?(p)
-
-          # TODO: ensure dirname(p) exists inside guest
-          config.vm.provision 'file', run: 'always',
-                              source: f + '/' + p,
-                              destination: '/' + p
-
-        end
-      end
-    end
-  }
+  provision config, ['provision/public/root', 'provision/private/root'], ''
 
 end

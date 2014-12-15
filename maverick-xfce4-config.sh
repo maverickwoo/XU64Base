@@ -426,6 +426,14 @@ print /augeas//error
 quit
 EOF
 
+# provision home directory
+echo
+echo 'rsync : provision/public/home'
+rsync -ir --inplace /vagrant/provision/public/home/ ~/
+echo
+echo 'rsync : provision/private/home'
+rsync -ir --inplace /vagrant/provision/private/home/ ~/
+
 # yay
 echo
 echo "Done. Please logout and re-login."
