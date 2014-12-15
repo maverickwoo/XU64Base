@@ -164,8 +164,22 @@ download_lmutil &
 # pull docker baseimage in background (specifically leave out sudo)
 docker pull phusion/baseimage:latest > /dev/null &
 
-# uninstall some useless stuff here
-# (does not seem productive: leave empty)
+# uninstall some unneeded stuff to save time and space
+sudo apt-get remove -y \
+     abiword-common \
+     gmusicbrowser \
+     gnumeric-common \
+     gnumeric-doc \
+     libabiword-3.0 \
+     parole \
+     pidgin-data \
+     pidgin-otr \
+     simple-scan \
+     thunderbird \
+     transmission-common \
+     xfburn \
+     `#end`
+sudo apt-get -y autoremove
 
 # dist-upgrade
 sudo apt-get update
