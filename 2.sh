@@ -33,7 +33,24 @@ install_docker_ssh ()
     rm -rf $source baseimage-docker-master
 }
 
-download_font_noto () {
+download_font_microsoft ()
+{
+    local source='/tmp/font_microsoft';
+    wget -q -O $source \
+         http://download.microsoft.com/download/E/6/7/E675FFFC-2A6D-4AB0-B3EB-27C9F8C8F696/PowerPointViewer.exe
+}
+
+install_font_microsoft ()
+{
+    local source='/tmp/font_microsoft';
+    local target='/usr/share/fonts/microsoft-fonts';
+    sudo apt-get install -y cabextract;
+    cabextract -L -d /tmp -F ppviewer.cab $source;
+    sudo cabextract -L -d $target -F \*.tt\? /tmp/ppviewer.cab
+}
+
+download_font_noto ()
+{
     local source='/tmp/Noto.zip';
     wget -q -O $source https://www.google.com/get/noto/pkgs/Noto.zip
 }
@@ -136,6 +153,7 @@ pkill -f /usr/bin/update-manager
 # start custom downloads
 download_atom &
 download_docker_ssh &
+download_font_microsoft &
 download_font_noto &
 download_font_powerline &
 download_font_source_code_pro &
@@ -219,6 +237,7 @@ wait
 # install custom stuff
 install_atom
 install_docker_ssh
+install_font_microsoft
 install_font_noto
 install_font_powerline
 install_font_source_code_pro
