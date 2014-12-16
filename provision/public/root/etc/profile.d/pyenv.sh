@@ -6,12 +6,13 @@ fi
 
 pyenv_init ()
 {
+    local script=/etc/profile.d/pyenv.sh
     local PY27=2.7.9
     local PY34=3.4.2
     curl -L \
          https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer \
         | bash
-    source /etc/profile.d/pyenv.sh
+    source $script
 
     sudo apt-get install -y \
          libbz2-dev \
@@ -29,7 +30,8 @@ pyenv_init ()
     pyenv virtualenv $PY34 venv34
 
     pyenv global $PY34              #I prefer python 3
-    pip install --user \
+    hash -r
+    pip install \
         bpython \
         cdiff \
         pip-tools \
