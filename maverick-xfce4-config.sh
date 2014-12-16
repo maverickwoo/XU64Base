@@ -243,10 +243,10 @@ load
 defnode f /files/$F
 defnode p \$f/channel[#attribute/name="xfce4-keyboard-shortcuts"]/property[#attribute/name="xfwm4"]/property[#attribute/name="custom"]
 
-# Switch window for same application: Alt \`
+# Switch window for same application: Super \`
 rm \$p/property[#attribute/value="switch_window_key"]
 clear \$p/property[last()+1]
-set \$p/property[last()]/#attribute/name "&lt;Alt&gt;grave"
+set \$p/property[last()]/#attribute/name "&lt;Super&gt;grave"
 set \$p/property[last()]/#attribute/type "string"
 set \$p/property[last()]/#attribute/value "switch_window_key"
 
