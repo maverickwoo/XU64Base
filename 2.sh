@@ -240,7 +240,7 @@ sudo apt-get install -y \
      g++-arm-linux-gnueabihf \
      g++-powerpc-linux-gnu \
      g++-powerpc64le-linux-gnu \
-     gcc-doc \
+     linux-libc-dev:i386 \
      `#end`
 
 # tier 2: good stuff that everyone should want in my opinion
@@ -253,6 +253,7 @@ sudo apt-get install -y \
      emacs24-el \
      font-manager \
      gawk \
+     gcc-doc \
      git \
      git-svn \
      htop \
