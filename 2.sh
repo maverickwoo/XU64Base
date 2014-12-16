@@ -56,7 +56,8 @@ install_font_microsoft ()
     local target='/usr/share/fonts/microsoft-fonts';
     sudo apt-get install -y cabextract;
     cabextract -L -d /tmp -F ppviewer.cab $source;
-    sudo cabextract -L -d $target -F \*.tt\? /tmp/ppviewer.cab
+    sudo cabextract -L -d $target -F \*.tt\? /tmp/ppviewer.cab;
+    rm $source /tmp/ppviewer.cab
 }
 
 download_font_noto ()
@@ -150,7 +151,22 @@ install_lmutil ()
 {
     local source='/tmp/lmutil.tgz';
     local target='/usr/local/bin';
-    sudo tar -C $target -zxvf $source
+    sudo tar -C $target -zxvf $source;
+    rm $source
+}
+
+download_sublime ()
+{
+    local source='/tmp/sublime3.tgz';
+    wget -q -O $source \
+         http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3065_amd64.deb
+}
+
+install_sublime ()
+{
+    local source='/tmp/sublime3.tgz';
+    sudo dpkg -i $source;
+    rm $source
 }
 
 #### SANITY CHECK ####
@@ -170,6 +186,7 @@ download_font_source_code_pro &
 download_font_source_sans_pro &
 download_font_source_serif_pro &
 download_lmutil &
+download_sublime &
 
 # pull docker baseimage in background (specifically leave out sudo)
 docker pull phusion/baseimage:latest > /dev/null &
@@ -185,6 +202,7 @@ sudo apt-get remove -y \
      pidgin-data \
      pidgin-otr \
      simple-scan \
+     software-center-aptdaemon-plugins \
      thunderbird \
      transmission-common \
      xfburn \
@@ -277,6 +295,7 @@ install_font_source_code_pro
 install_font_source_sans_pro
 install_font_source_serif_pro
 install_lmutil
+install_sublime
 sudo chmod -R og=u,og-w /usr/share/fonts
 
 # courtesy
