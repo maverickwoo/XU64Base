@@ -82,7 +82,6 @@ sudo update-grub
 # vagrant: do this after docker and vboxsf
 echo 'root:vagrant' | sudo chpasswd
 sudo usermod -a -G docker,root,sudo,vboxsf vagrant
-sudo chmod g+w /etc/profile.d
 sudo apt-get install -y ssh
 sudo sed -i '$aUseDNS no' /etc/ssh/sshd_config
 mkdir ~/.ssh
@@ -91,8 +90,10 @@ wget -q --no-check-certificate -O ~/.ssh/authorized_keys \
     https://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub
 chmod 600 ~/.ssh/authorized_keys
 
-# ubuntu annoyance
+# /etc adjustments
 sudo sed -ri 's/^(AVAHI_DAEMON_DETECT_LOCAL)=.*/\1=0/' /etc/default/avahi-daemon
+sudo chmod g+w /etc/profile.d   #vagrant provisioning
+sudo mkdir /etc/skel/bin        #everyone needs this directory
 
 # no more Guest Additions CD on desktop
 sudo eject -v /dev/sr1
