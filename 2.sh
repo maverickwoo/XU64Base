@@ -9,7 +9,7 @@ calm_down ()
 {
     echo 'Calming down...'
     # use awk (gawk may not be installed yet)
-    while [ $(uptime | awk -F':|,| ' '{print int($(NF-4))}') -ge ${1:-10} ]; do
+    while [ $(uptime | awk -F':|,| ' '{print int($(NF-4))}') -ge ${1:-3} ]; do
         uptime
         sleep ${2:-5}
     done
@@ -284,7 +284,6 @@ sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 # wait for bg downloads
 echo 'Waiting for background downloads to finish...'
 wait
-calm_down
 
 # install custom stuff
 install_atom
@@ -305,6 +304,7 @@ sudo updatedb
 
 if [ vagrant == "$USER" ]; then
 
+    sleep 15                    #xfsettingsd bug
     calm_down
 
     # final step: zero out empty space before packaging into a box
