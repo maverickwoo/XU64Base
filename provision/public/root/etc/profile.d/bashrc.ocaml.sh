@@ -21,9 +21,10 @@ EOF
         sed -ri 's/^(jobs:).*/\1 '$((1 + $NUMPROC))'/' ~/.opam/config;
         eval $(opam config env)
     fi;
+    opam_new_stack
 }
 
-opam_create_stack ()
+opam_new_stack ()
 {
     local TARGETSWITCH=${1:-$(date +%m%d)};
     local TARGETCOMPILER=${2:-4.02.1+PIC};
@@ -35,7 +36,7 @@ opam_create_stack ()
     opam_install_stack
 }
 
-opam_install_stack ()
+opam_install_packages ()
 {
     opam install -y \
          `#survival` \
