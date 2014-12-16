@@ -96,7 +96,9 @@ sudo chmod g+w /etc/profile.d   #vagrant provisioning
 sudo mkdir /etc/skel/bin        #everyone needs this directory
 
 # no more Guest Additions CD on desktop
-sudo eject -v /dev/sr1
+while head -c 1 /dev/sr1 &> /dev/null; do
+    sudo eject -v /dev/sr1;
+done
 rm -rf /media/vagrant/VBOX
 
 # yay
