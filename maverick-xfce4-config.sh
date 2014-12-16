@@ -31,7 +31,7 @@ xml_clean ()
 
 # Personal -> Appearance
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
-init_file $F <<"EOF"
+init_file $F << "EOF"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xsettings" version="1.0">
   <property name="Net" type="empty">
@@ -118,7 +118,7 @@ xml_clean $F
 
 # Personal -> Light Locker Settings
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
-init_file $F <<"EOF"
+init_file $F << "EOF"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xfce4-power-manager" version="1.0">
   <property name="xfce4-power-manager" type="empty">
@@ -363,7 +363,7 @@ xml_clean $F
 
 # Hardware -> Keyboard -> Behavior
 F=~/.config/xfce4/xfconf/xfce-perchannel-xml/keyboards.xml
-init_file $F <<"EOF"
+init_file $F << "EOF"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="keyboards" version="1.0">
   <property name="Default" type="empty">

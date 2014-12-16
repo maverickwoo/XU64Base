@@ -38,20 +38,20 @@ opam_create_stack ()
 opam_install_stack ()
 {
     opam install -y \
-         `# survival` \
+         `#survival` \
          merlin \
          oasis \
          ocp-indent \
          ocp-index \
          utop \
-         `# bap dependencies` \
+         `#bap dependencies` \
          bitstring \
          cmdliner \
          core_bench \
          core_kernel \
          piqi \
          zarith \
-         `# end`;
+         `#end`;
     opam install -y \
          ocamlspot #factor this out since it's 4.01 only
 }
@@ -76,7 +76,7 @@ clone_github_bap ()
 
     # fetch other forks
     for user in \
-        `# CMU` \
+        `#CMU` \
             dbrumley \
             ivg \
             rvantonder \

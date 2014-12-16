@@ -314,7 +314,7 @@ if [ vagrant == "$USER" ]; then
     sudo rm -f /EMPTY
 
     # yay
-    cat <<"EOF"
+    cat << "EOF"
 
 Shutdown VM and take Snapshot 2. Then, in the *host*, execute these commands
 by substituting "XU64Base" with the name of this VM:
