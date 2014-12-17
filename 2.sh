@@ -217,6 +217,17 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install -y apt-file
 sudo apt-file update > /dev/null &
 
+# debconf
+sudo apt-get install -y debconf-utils
+cat << "EOF" | sudo debconf-set-selections
+krb5-config krb5-config/add_servers boolean false
+krb5-config krb5-config/add_servers_realm string AEGIS.CYLAB.CMU.EDU
+krb5-config krb5-config/admin_server string
+krb5-config krb5-config/default_realm string AEGIS.CYLAB.CMU.EDU
+krb5-config krb5-config/kerberos_servers string
+krb5-config krb5-config/read_conf boolean true
+EOF
+
 # tier 1: bap + ida + llvm (building tools) + qira (just exo-docker) + cross
 sudo apt-get install -y \
      `#bap` \
@@ -258,6 +269,7 @@ sudo apt-get install -y \
      git-svn \
      htop \
      kdiff3-qt \
+     krb5-user \
      libxml2-utils             `#xmllint` \
      lsb                       `#lmutil` \
      mercurial \
