@@ -177,16 +177,18 @@ pkill -f /usr/bin/update-manager
 #### AUTOPILOT ####
 
 # start custom downloads
-download_atom &
-download_docker_ssh &
-download_font_microsoft &
-download_font_noto &
-download_font_powerline &
-download_font_source_code_pro &
-download_font_source_sans_pro &
-download_font_source_serif_pro &
-download_lmutil &
-download_sublime &
+if [ vagrant == "$USER" ]; then
+    download_atom &
+    download_docker_ssh &
+    download_font_microsoft &
+    download_font_noto &
+    download_font_powerline &
+    download_font_source_code_pro &
+    download_font_source_sans_pro &
+    download_font_source_serif_pro &
+    download_lmutil &
+    download_sublime &
+fi
 
 # pull docker baseimage in background (specifically leave out sudo)
 docker pull phusion/baseimage:latest > /dev/null &
@@ -298,17 +300,19 @@ echo 'Waiting for background downloads to finish...'
 wait
 
 # install custom stuff
-install_atom
-install_docker_ssh
-install_font_microsoft
-install_font_noto
-install_font_powerline
-install_font_source_code_pro
-install_font_source_sans_pro
-install_font_source_serif_pro
-install_lmutil
-install_sublime
-sudo chmod -R og=u,og-w /usr/share/fonts
+if [ vagrant == "$USER" ]; then
+    install_atom
+    install_docker_ssh
+    install_font_microsoft
+    install_font_noto
+    install_font_powerline
+    install_font_source_code_pro
+    install_font_source_sans_pro
+    install_font_source_serif_pro
+    install_lmutil
+    install_sublime
+    sudo chmod -R og=u,og-w /usr/share/fonts
+fi
 
 # courtesy
 sudo apt-get -y autoremove
