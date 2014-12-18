@@ -1,24 +1,13 @@
-# -*- mode: shell-script -*-
+export OPAMKEEPBUILDDIR="yes"
+export OCAMLPARAM='_,annot=0,bin-annot=1,g=1,short-paths=1'
 
 opam_init ()
 {
     if [ "$(opam switch 2> /dev/null)" ]; then
         echo 'opam switch already exists.';
     else
-        local NUMPROC=$(if [ -r /proc/cpuinfo ]; then
-                            grep -cF processor /proc/cpuinfo;
-                        else
-                            sysctl -n hw.logicalcpu; #darwin
-                        fi);
-        local S=$(cat <<"EOF"
-export OPAMKEEPBUILDDIR="yes";
-export OCAMLPARAM='_,annot=0,bin-annot=1,short-paths=1'
-EOF
-              );
-        eval "$S";
-        echo "$S" >> ~/.bashrc;
         opam init -a;
-        sed -ri 's/^(jobs:).*/\1 '$((1 + $NUMPROC))'/' ~/.opam/config;
+        sed -ri 's/^(jobs:).*/\1 '$(num_proc 1)'/' ~/.opam/config;
         eval $(opam config env)
     fi;
     opam_new_stack
@@ -33,7 +22,7 @@ opam_new_stack ()
     echo;
     eval $CMD;
     eval $(opam config env);
-    opam_install_stack
+    opam_install_packages
 }
 
 opam_install_packages ()
