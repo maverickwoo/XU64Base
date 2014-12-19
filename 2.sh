@@ -219,29 +219,19 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install -y apt-file
 sudo apt-file update > /dev/null &
 
-# debconf
-sudo apt-get install -y debconf-utils
-cat << "EOF" | sudo debconf-set-selections
-krb5-config krb5-config/add_servers boolean false
-krb5-config krb5-config/add_servers_realm string AEGIS.CYLAB.CMU.EDU
-krb5-config krb5-config/admin_server string
-krb5-config krb5-config/default_realm string AEGIS.CYLAB.CMU.EDU
-krb5-config krb5-config/kerberos_servers string
-krb5-config krb5-config/read_conf boolean true
-EOF
-
-# tier 1: bap + ida + llvm (building tools) + qira (just exo-docker) + cross
+# tier 1: BAP + IDA + LLVM (building tools) + qira (exo-docker) + cross compiler
 sudo apt-get install -y \
-     `#bap` \
+     `#BAP` \
      libgmp-dev                `#zarith` \
      libncurses5-dev           `#ocamlfind` \
      llvm \
      m4                        `#ocamlfind` \
      ocaml \
      opam \
-     `#ida` \
+     `#IDA` \
      libqtgui4:i386 \
-     `#llvm` \
+     lsb                       `#lmutil` \
+     `#LLVM` \
      cmake \
      ninja-build \
      `#qira` \
@@ -271,9 +261,8 @@ sudo apt-get install -y \
      git-svn \
      htop \
      kdiff3-qt \
-     krb5-user \
+     keychain \
      libxml2-utils             `#xmllint` \
-     lsb                       `#lmutil` \
      mercurial \
      moreutils                 `#sponge` \
      mosh \
@@ -294,6 +283,20 @@ sudo apt-get install -y \
      `#end`
 sudo chmod a+x $(locate git-new-workdir)
 sudo ln -sf $(locate git-new-workdir) /usr/local/bin
+
+# tier 3: CMU specific
+sudo apt-get install -y debconf-utils
+cat << "EOF" | sudo debconf-set-selections
+krb5-config krb5-config/add_servers boolean false
+krb5-config krb5-config/add_servers_realm string AEGIS.CYLAB.CMU.EDU
+krb5-config krb5-config/admin_server string
+krb5-config krb5-config/default_realm string AEGIS.CYLAB.CMU.EDU
+krb5-config krb5-config/kerberos_servers string
+krb5-config krb5-config/read_conf boolean true
+EOF
+sudo apt-get install -y \
+     krb5-user \
+     `#end`
 
 # wait for bg downloads
 echo 'Waiting for background downloads to finish...'
