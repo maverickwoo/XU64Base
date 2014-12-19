@@ -39,10 +39,6 @@ fi
 # https://github.com/achaphiv/ppa-fonts/blob/master/ppa/README.md
 sudo add-apt-repository -s -y ppa:no1wantdthisname/ppa
 
-# add latest ocaml + opam
-# https://launchpad.net/~avsm/+archive/ubuntu/ocaml42+opam12
-sudo add-apt-repository -s -y ppa:avsm/ocaml42+opam12
-
 # add chrome
 # http://www.ubuntuupdates.org/ppa/google_chrome?dist=stable
 # exact filename is important since they try to edit this file
@@ -50,6 +46,13 @@ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub |
     sudo apt-key add -
 echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' |
     sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
+
+# add git
+sudo add-apt-repository -s -y ppa:git-core/ppa
+
+# add ocaml + opam
+# https://launchpad.net/~avsm/+archive/ubuntu/ocaml42+opam12
+sudo add-apt-repository -s -y ppa:avsm/ocaml42+opam12
 
 # should update anyway (curl used to have problem if we don't update)
 sudo apt-get update
