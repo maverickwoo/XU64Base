@@ -1,5 +1,11 @@
-export OPAMKEEPBUILDDIR="yes"
 export OCAMLPARAM='_,annot=0,bin-annot=1,g=1,short-paths=1'
+export OCAMLRUNPARAM='b'
+export OPAMKEEPBUILDDIR='yes'
+export OPAMSOLVERTIMEOUT=160
+
+alias utop='utop -principal -short-paths -strict-sequence -w +a-4-44'
+
+## stack manipulation
 
 opam_init ()
 {
@@ -7,7 +13,7 @@ opam_init ()
         echo 'opam switch already exists.';
     else
         opam init -a;
-        sed -ri 's/^(jobs:).*/\1 '$(num_proc 1)'/' ~/.opam/config;
+        sed -ri 's/^(jobs:).*/\1 '$(num_proc 2)'/' ~/.opam/config;
         eval $(opam config env)
     fi;
     opam_new_stack
@@ -56,6 +62,56 @@ opams ()
     opam switch show
 }
 
+## helper functions
+
+oco ()
+{
+    rm -f \
+       myocamlbuild.ml \
+       setup.data \
+       setup.log \
+       setup.ml;
+    oasis setup 2>&1 | grep --color -E '^|^W:.*';
+    ./configure --override ocamlbuildflags "${1:--j $(num_proc 2)}" \
+                --prefix=$(opam config var prefix) \
+                `#enable test by default` \
+                ${2:-"--enable-tests"} 2>&1 |
+        grep --color -E \
+             '^|^Warning.*|^Compile tests executable and library.*'
+}
+
+dotmerlin ()
+{
+    local extras=$(cat << "EOF"
+EXT here
+EXT nonrec
+EXT ounit
+FLG -short-paths
+FLG -strict-sequence
+PKG core_kernel
+sREC
+EOF
+          );
+
+    # To generate the regex below:
+    # (princ (regexp-opt '("a" "cmi" "cmo" "cmt" "cmti" "cmx" "cmxa" "o") t)) ;'
+
+    # note: on OSX my ~/bin/find -> /opt/local/bin/gfind
+    find ${1:-.} \( -samefile ${1:-.} -printf "$extras\n" \) \
+         -or \( -regex '.+\.mli?$' -printf 'S %h\n' \) \
+         -or \( -regex '.+\.cm\(ti\|xa\|[iotx]\|[ao]\)$' -printf 'B %h\n' \) |
+        sort -u
+}
+
+mkbyte ()
+{
+    find . -maxdepth 1 -type l -name \*.native -exec readlink {} \; |
+        gawk -F'/_build/|.native$' '{print $2 ".byte"}' |
+        xargs ocamlbuild $*
+}
+
+## bap specific
+
 clone_github_bap ()
 {
     git clone git@github.com:maverickwoo/bap.git;
@@ -64,7 +120,7 @@ clone_github_bap ()
     # upstream
     git remote add upstream git@github.com:BinaryAnalysisPlatform/bap.git;
 
-    # fetch other forks
+    # forks
     for user in \
         `#CMU` \
             dbrumley \
@@ -79,20 +135,4 @@ clone_github_bap ()
     git fetch --all -p --progress;
     git fetch --all --tags;
     git status
-}
-
-oco ()
-{
-    rm -f \
-       myocamlbuild.ml \
-       setup.data \
-       setup.log \
-       setup.ml;
-    oasis setup 2>&1 | grep --color -E '^|^W:.*';
-    ./configure --override ocamlbuildflags "-j ${1:-6}" \
-                --prefix=$(opam config var prefix) \
-                `# enable test by default` \
-                ${2:-"--enable-tests"} 2>&1 |
-        grep --color -E \
-             '^|^Warning.*|^Compile tests executable and library.*'
 }
