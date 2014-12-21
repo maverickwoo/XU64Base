@@ -4,7 +4,7 @@ if [ -d "$HOME/.pyenv" ]; then
     eval "$(pyenv virtualenv-init -)";
 fi
 
-pyenv_init ()
+my_pyenv_init ()
 {
     local script=/etc/profile.d/pyenv.sh
     local PY27=2.7.9

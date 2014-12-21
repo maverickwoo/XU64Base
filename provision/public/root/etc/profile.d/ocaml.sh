@@ -7,7 +7,7 @@ alias utop='utop -principal -short-paths -strict-sequence -w +a-4-44'
 
 ## stack manipulation
 
-opam_init ()
+my_opam_init ()
 {
     if [ "$(opam switch 2> /dev/null)" ]; then
         echo 'opam switch already exists.';
