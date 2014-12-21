@@ -89,7 +89,7 @@ EXT ounit
 FLG -short-paths
 FLG -strict-sequence
 PKG core_kernel
-sREC
+REC
 EOF
           );
 
@@ -100,6 +100,7 @@ EOF
     find ${1:-.} \( -samefile ${1:-.} -printf "$extras\n" \) \
          -or \( -regex '.+\.mli?$' -printf 'S %h\n' \) \
          -or \( -regex '.+\.cm\(ti\|xa\|[iotx]\|[ao]\)$' -printf 'B %h\n' \) |
+        cat .merlin - 2> /dev/null |
         sort -u
 }
 
