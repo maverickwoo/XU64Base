@@ -71,13 +71,17 @@ oco ()
        setup.data \
        setup.log \
        setup.ml;
-    oasis setup 2>&1 | grep --color -E '^|^W:.*';
+    local enable_tests=$(ls -F . \
+        | awk '/.*_test\//{print "--enable-tests"; exit}');
+    oasis setup 2>&1 | grep --color -E '^W:.*|^';
     ./configure --override ocamlbuildflags "${1:--j $(num_proc 2)}" \
                 --prefix=$(opam config var prefix) \
-                `#enable test by default` \
-                ${2:-"--enable-tests"} 2>&1 |
+                $enable_tests $2 2>&1 |
         grep --color -E \
-             '^|^Warning.*|^Compile tests executable and library.*'
+             -e '^Compile tests executable and library.*' \
+             -e '^Install architecture-independent files dir.*' \
+             -e '^Warning.*' \
+             -e '^'             #display everything else but with no highlight
 }
 
 dotmerlin ()
