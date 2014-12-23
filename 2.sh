@@ -9,7 +9,7 @@ calm_down ()
 {
     echo 'Calming down...'
     # use awk (gawk may not be installed yet)
-    while [ $(uptime | awk -F':|,| ' '{print int($(NF-4))}') -ge ${1:-3} ]; do
+    while [ $(uptime | awk -F':|,| ' '{print int($(NF-4))}') -ge ${1:-10} ]; do
         uptime
         sleep ${2:-5}
     done
@@ -296,6 +296,13 @@ krb5-config krb5-config/read_conf boolean true
 EOF
 sudo apt-get install -y \
      krb5-user \
+     `#end`
+
+# tier 4: postgresql
+sudo apt-get install -y \
+     postgresql \
+     postgresql-client \
+     postgresql-contrib \
      `#end`
 
 # wait for bg downloads
