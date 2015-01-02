@@ -64,9 +64,16 @@ opams ()
 
 ## helper functions
 
+rm_if_untracked ()
+{
+    for x in "$@"; do
+        git ls-files --error-unmatch "$x" &>/dev/null || rm -f "$x";
+    done
+}
+
 oco ()
 {
-    rm -f \
+    rm_if_untracked \
        myocamlbuild.ml \
        setup.data \
        setup.log \
