@@ -1,7 +1,7 @@
 export OCAMLPARAM='_,annot=0,bin-annot=1,g=1,short-paths=1'
 export OCAMLRUNPARAM='b'
 export OPAMKEEPBUILDDIR='yes'
-export OPAMSOLVERTIMEOUT=160
+export OPAMSOLVERTIMEOUT='160'
 
 alias utop='utop -principal -short-paths -strict-sequence -w +a-4-44'
 
@@ -9,7 +9,7 @@ alias utop='utop -principal -short-paths -strict-sequence -w +a-4-44'
 
 my_opam_init ()
 {
-    if [ "$(opam switch 2> /dev/null)" ]; then
+    if [ "$(opam switch 2>/dev/null)" ]; then
         echo 'opam switch already exists.';
     else
         opam init -a;
@@ -54,7 +54,7 @@ opam_install_packages ()
 
 opams ()
 {
-    sh -c "opam switch $1 $(($# == 1 ? 1 : 0))> /dev/null" |
+    sh -c "opam switch $1 $(($# == 1 ? 1 : 0)) >/dev/null" |
         grep --color=always -e ' [CI] ' |
         sort;
     eval $(opam config env);
