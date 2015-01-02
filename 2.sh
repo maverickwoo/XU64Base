@@ -268,6 +268,7 @@ sudo apt-get install -y \
      mosh \
      ncdu \
      nmap \
+     parallel                  `#niceload, parallel` \
      python-pip \
      realpath \
      screen \
@@ -330,7 +331,7 @@ sudo updatedb
 
 if [ vagrant == "$USER" ]; then
 
-    sleep 15                    #xfsettingsd bug
+    sleep 15                    #trigger xfsettingsd bug
     calm_down
 
     # final step: zero out empty space before packaging into a box
