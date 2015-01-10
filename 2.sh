@@ -268,7 +268,7 @@ sudo apt-get install -y \
      mosh \
      ncdu \
      nmap \
-     parallel                  `#niceload, parallel` \
+     pigz \
      python-pip \
      realpath \
      screen \
@@ -282,6 +282,8 @@ sudo apt-get install -y \
      vim-gtk \
      xml2 \
      `#end`
+sudo apt-get -o Dpkg::Options::="--force-conflicts" install -y \
+     parallel                  `#niceload, parallel`
 sudo chmod a+x $(locate git-new-workdir)
 sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 
