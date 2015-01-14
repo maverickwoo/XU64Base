@@ -35,6 +35,7 @@ opam_install_packages ()
 {
     opam install -y \
          `#survival` \
+         dum \
          merlin \
          oasis \
          ocp-indent \
@@ -43,10 +44,16 @@ opam_install_packages ()
          `#bap dependencies` \
          bitstring \
          cmdliner \
+         cohttp \
          core_bench \
          core_kernel \
-         piqi \
+         ezjsonm \
+         faillib \
+         lwt-zmq \
          zarith \
+         `#nice to have` \
+         menhir \
+         sqlite3 \
          `#end`;
     opam install -y \
          ocamlspot #factor this out since it's 4.01 only
@@ -123,7 +130,7 @@ mkbyte ()
 {
     find . -maxdepth 1 -type l -name \*.native -exec readlink {} \; |
         gawk -F'/_build/|.native$' '{print $2 ".byte"}' |
-        xargs ocamlbuild $*
+        xargs ocamlbuild -tag syntax_camlp4o "$@"
 }
 
 ## bap specific
