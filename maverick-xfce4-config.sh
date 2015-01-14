@@ -53,7 +53,7 @@ defnode p \$f/channel[#attribute/name="xsettings"]/property[#attribute/name="Net
 rm \$p/property[#attribute/name="ThemeName"]
 set \$p/property[last()+1]/#attribute/name "ThemeName"
 set \$p/property[#attribute/name="ThemeName"]/#attribute/type "string"
-set \$p/property[#attribute/name="ThemeName"]/#attribute/value "Greybird"
+set \$p/property[#attribute/name="ThemeName"]/#attribute/value "Numix"
 
 # Icons
 rm \$p/property[#attribute/name="IconThemeName"]
@@ -214,7 +214,7 @@ defnode p \$f/channel[#attribute/name="xfwm4"]/property[#attribute/name="general
 
 # Style -> Theme
 set \$p/property[#attribute/name="theme"]/#attribute/type "string"
-set \$p/property[#attribute/name="theme"]/#attribute/value "Albatross"
+set \$p/property[#attribute/name="theme"]/#attribute/value "Numix"
 
 # Style -> Title font, Left alignment
 set \$p/property[#attribute/name="title_font"]/#attribute/type "string"
