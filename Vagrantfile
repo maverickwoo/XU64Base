@@ -28,7 +28,7 @@ Vagrant.configure('2') do |config|
   config.vm.provider 'virtualbox' do |vb|
     vb.gui = true
     vb.cpus = 4
-    vb.memory = 6 * 1024
+    vb.memory = (ENV['M'] || '6').to_i * 1024
     vb.customize [
       'setextradata',
       :id,
@@ -37,7 +37,10 @@ Vagrant.configure('2') do |config|
     ]
   end
 
-  {'/Users/maverick/vmshare' => '/media/vmshare'}.each { |h, g|
+  {
+    '/Users/maverick/vmshare' => '/media/sf_vmshare',
+    '/Users/maverick/Programming/maverickwoo/qira-docker' => '/media/qira-docker'
+  }.each { |h, g|
     config.vm.synced_folder h, g
   }
 
