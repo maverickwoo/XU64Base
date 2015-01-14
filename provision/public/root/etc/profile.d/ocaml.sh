@@ -23,7 +23,7 @@ opam_new_stack ()
 {
     local TARGETSWITCH=${1:-$(date +%m%d)};
     local TARGETCOMPILER=${2:-4.02.1+PIC};
-    local CMD="opam switch install $TARGETSWITCH -A $TARGETCOMPILER";
+    local CMD="opam switch install -v $TARGETSWITCH -A $TARGETCOMPILER";
     echo $CMD;
     echo;
     eval $CMD;
@@ -93,8 +93,11 @@ oco ()
 
 dotmerlin ()
 {
-    local extras=$(cat << "EOF"
+    local extras=$(cat <<"EOF"
+EXT custom_printf
 EXT here
+EXT js
+EXT lwt
 EXT nonrec
 EXT ounit
 FLG -short-paths
@@ -105,11 +108,12 @@ EOF
           );
 
     # To generate the regex below:
+    # (princ (regexp-opt '("ml" "mli" "mll" "mly") t)) ;'
     # (princ (regexp-opt '("a" "cmi" "cmo" "cmt" "cmti" "cmx" "cmxa" "o") t)) ;'
 
     # note: on OSX my ~/bin/find -> /opt/local/bin/gfind
     find ${1:-.} \( -samefile ${1:-.} -printf "$extras\n" \) \
-         -or \( -regex '.+\.mli?$' -printf 'S %h\n' \) \
+         -or \( -regex '.+\.ml[ily]?$' -printf 'S %h\n' \) \
          -or \( -regex '.+\.cm\(ti\|xa\|[iotx]\|[ao]\)$' -printf 'B %h\n' \) |
         cat .merlin - 2> /dev/null |
         sort -u
