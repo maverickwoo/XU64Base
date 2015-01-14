@@ -226,6 +226,7 @@ sudo apt-get install -y \
      libgmp-dev                `#zarith` \
      libiberty-dev             `ocamlobjinfo cmxs` \
      libncurses5-dev           `#ocamlfind` \
+     libzmq3-dev \
      llvm \
      m4                        `#ocamlfind` \
      ocaml \
