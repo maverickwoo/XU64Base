@@ -61,9 +61,7 @@ opam_install_packages ()
 
 opams ()
 {
-    sh -c "opam switch $1 $(($# == 1 ? 1 : 0)) >/dev/null" |
-        grep --color=always -e ' [CI] ' |
-        sort;
+    opam switch $1 2>/dev/null | grep --color=always -e ' [CI] ' | sort;
     eval $(opam config env);
     echo;
     opam switch show
@@ -81,16 +79,16 @@ rm_if_untracked ()
 oco ()
 {
     rm_if_untracked \
-       myocamlbuild.ml \
        setup.data \
        setup.log \
        setup.ml;
-    local enable_tests=$(ls -F . \
-        | awk '/.*_test\//{print "--enable-tests"; exit}');
+    local enable_tests=$(\
+        ls -F . |
+            awk '/.*_test\// { print "--enable-tests"; exit }');
     oasis setup 2>&1 | grep --color -E '^W:.*|^';
     ./configure --override ocamlbuildflags "${1:--j $(num_proc 2)}" \
                 --prefix=$(opam config var prefix) \
-                $enable_tests $2 2>&1 |
+                $enable_tests "${@:2}" 2>&1 |
         grep --color -E \
              -e '^Compile tests executable and library.*' \
              -e '^Install architecture-independent files dir.*' \
