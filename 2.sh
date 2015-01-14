@@ -217,12 +217,14 @@ sudo apt-get dist-upgrade -y
 
 # apt-file, good to cache (do these two together to avoid dialog box)
 sudo apt-get install -y apt-file
-sudo apt-file update > /dev/null &
+sudo apt-file update >/dev/null &
 
 # tier 1: BAP + IDA + LLVM (building tools) + qira (exo-docker) + cross compiler
 sudo apt-get install -y \
      `#BAP` \
+     binutils-multiarch-dev    `ocamlobjinfo cmxs` \
      libgmp-dev                `#zarith` \
+     libiberty-dev             `ocamlobjinfo cmxs` \
      libncurses5-dev           `#ocamlfind` \
      llvm \
      m4                        `#ocamlfind` \
@@ -250,13 +252,14 @@ sudo apt-get install -y \
 sudo apt-get install -y \
      aptitude \
      augeas-tools \
-     bash-doc                  `#info bash` \
+     bash-doc                  `#info` \
+     binutils-doc              `#info` \
      curl \
      emacs24 \
      emacs24-el \
      font-manager \
      gawk \
-     gcc-doc \
+     gcc-doc                   `#info` \
      git \
      git-svn \
      htop \
@@ -266,6 +269,7 @@ sudo apt-get install -y \
      mercurial \
      moreutils                 `#sponge` \
      mosh \
+     most \
      ncdu \
      nmap \
      pigz \
