@@ -28,9 +28,9 @@
   new_tab = <Super>t
   new_terminator = None
   new_window = None
-  next_tab = None
+  next_tab = <Primary>Tab
   paste = <Super>v
-  prev_tab = None
+  prev_tab = <Primary><Shift>Tab
   reset = None
   reset_clear = <Super>k
   resize_down = <Shift><Super>Down
