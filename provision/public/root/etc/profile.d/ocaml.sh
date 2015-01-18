@@ -50,6 +50,7 @@ opam_install_packages ()
          ezjsonm \
          faillib \
          lwt-zmq \
+         uri \
          zarith \
          `#nice to have` \
          menhir \
