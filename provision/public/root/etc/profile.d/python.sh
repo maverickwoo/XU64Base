@@ -1,35 +1,46 @@
-if [ -d "$HOME/.pyenv" ]; then
-    export PATH="$HOME/.pyenv/bin:$PATH";
-    eval "$(pyenv init -)";
-    eval "$(pyenv virtualenv-init -)";
-fi
+my_pyenv_inject ()
+{
+    if [ -d "$HOME/.pyenv" ]; then
+        export PATH="$HOME/.pyenv/bin:$PATH";
+        eval "$(pyenv init -)";
+        eval "$(pyenv virtualenv-init -)";
+    fi
+}
+my_pyenv_inject
 
 my_pyenv_init ()
 {
-    local script=/etc/profile.d/pyenv.sh
     local PY27=2.7.9
     local PY34=3.4.2
     curl -L \
          https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer \
         | bash
-    source $script
 
-    sudo apt-get install -y \
-         libbz2-dev \
-         libreadline-dev \
-         libsqlite3-dev \
-         libssl-dev \
-         zlib1g-dev \
-         `#end`
+    my_pyenv_inject
 
-    pyenv install $PY27 &
-    pyenv install $PY34 &
-    wait
+    # install pre-requisitesfsdlkfjsdlkfjsdlkjsdlk spell check humspell broken
+    case "$OSTYPE" in
+        linux*)
+            sudo apt-get install -y \
+                 libbz2-dev \
+                 libreadline-dev \
+                 libsqlite3-dev \
+                 libssl-dev \
+                 zlib1g-dev \
+                 `#end`
+            ;;
+        darwin*) `#TBD` ;;
+    esac
 
+    # I use both
+    parallel -k pyenv install ::: $PY27 $PY34
+
+    # set up two venvs
     pyenv virtualenv $PY27 venv27
     pyenv virtualenv $PY34 venv34
 
-    pyenv global $PY34              #I prefer python 3
+    # I prefer python 3 but BAP currently supports 2.7 better
+    pyenv global $PY27
     hash -r
     pip install \
         bpython \
@@ -37,5 +48,6 @@ my_pyenv_init ()
         pip-tools \
         `#end`
 
+    # done
     pyenv versions
 }
