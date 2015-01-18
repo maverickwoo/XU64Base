@@ -50,6 +50,12 @@ echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' |
 # add git
 sudo add-apt-repository -s -y ppa:git-core/ppa
 
+# add mariadb
+sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 \
+     0xcbcb082a1bb943db
+sudo add-apt-repository -s -y \
+     'deb http://mirror.jmu.edu/pub/mariadb/repo/10.0/ubuntu trusty main'
+
 # add ocaml + opam
 # https://launchpad.net/~avsm/+archive/ubuntu/ocaml42+opam12
 sudo add-apt-repository -s -y ppa:avsm/ocaml42+opam12
