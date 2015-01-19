@@ -239,7 +239,9 @@ sudo apt-get install -y \
      cmake \
      ninja-build \
      `#qira` \
+     binfmt-support \
      google-chrome-stable \
+     qemu-user-static \
      socat \
      `#cross` \
      g++-4.8-multilib \
