@@ -191,7 +191,7 @@ if [ vagrant == "$USER" ]; then
 fi
 
 # pull docker baseimage in background (specifically leave out sudo)
-docker pull phusion/baseimage:latest > /dev/null &
+docker pull phusion/baseimage:latest >/dev/null &
 
 # uninstall some unneeded stuff to save time and space
 sudo apt-get remove -y \
@@ -223,6 +223,7 @@ sudo apt-file update >/dev/null &
 sudo apt-get install -y \
      `#BAP` \
      binutils-multiarch-dev    `ocamlobjinfo cmxs` \
+     clang \
      libgmp-dev                `#zarith` \
      libiberty-dev             `ocamlobjinfo cmxs` \
      libncurses5-dev           `#ocamlfind` \
