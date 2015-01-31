@@ -281,6 +281,7 @@ sudo apt-get install -y \
      realpath \
      screen \
      silversearcher-ag \
+     sqlite \
      ssh \
      subversion \
      terminator \

@@ -121,7 +121,7 @@ EOF
     find ${1:-.} \( -samefile ${1:-.} -printf "$extras\n" \) \
          -or \( -regex '.+\.ml[ily]?$' -printf 'S %h\n' \) \
          -or \( -regex '.+\.cm\(ti\|xa\|[iotx]\|[ao]\)$' -printf 'B %h\n' \) |
-        cat .merlin - 2> /dev/null |
+        cat .merlin - 2>/dev/null |
         sort -u
 }
 
