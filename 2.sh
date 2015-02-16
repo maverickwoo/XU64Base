@@ -242,6 +242,7 @@ sudo apt-get install -y \
      binfmt-support \
      google-chrome-stable \
      qemu-user-static \
+     qemu-util \
      socat \
      `#cross` \
      g++-4.8-multilib \
@@ -279,6 +280,7 @@ sudo apt-get install -y \
      pigz \
      python-pip \
      realpath \
+     renameutils \
      screen \
      silversearcher-ag \
      sqlite \
