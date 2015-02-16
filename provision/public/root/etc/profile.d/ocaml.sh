@@ -1,6 +1,6 @@
 export OCAMLPARAM='_,annot=0,bin-annot=1,g=1,short-paths=1'
 export OCAMLRUNPARAM='b'
-export OPAMKEEPBUILDDIR='yes'
+export OPAMKEEPBUILDDIR='true'
 export OPAMSOLVERTIMEOUT='160'
 
 alias utop='utop -principal -short-paths -strict-sequence -w +a-4-44'
@@ -9,7 +9,7 @@ alias utop='utop -principal -short-paths -strict-sequence -w +a-4-44'
 
 my_opam_init ()
 {
-    if [ "$(opam switch 2>/dev/null)" ]; then
+    if [ "$(opam switch 2> /dev/null)" ]; then
         echo 'opam switch already exists.';
     else
         opam init -a;
@@ -62,7 +62,7 @@ opam_install_packages ()
 
 opams ()
 {
-    opam switch $1 2>/dev/null | grep --color=always -e ' [CI] ' | sort;
+    opam switch $1 2> /dev/null | grep --color=always -e ' [CI] ' | sort;
     eval $(opam config env);
     echo;
     opam switch show
@@ -73,7 +73,7 @@ opams ()
 rm_if_untracked ()
 {
     for x in "$@"; do
-        git ls-files --error-unmatch "$x" &>/dev/null || rm -f "$x";
+        git ls-files --error-unmatch "$x" &> /dev/null || rm -f "$x";
     done
 }
 
@@ -121,7 +121,7 @@ EOF
     find ${1:-.} \( -samefile ${1:-.} -printf "$extras\n" \) \
          -or \( -regex '.+\.ml[ily]?$' -printf 'S %h\n' \) \
          -or \( -regex '.+\.cm\(ti\|xa\|[iotx]\|[ao]\)$' -printf 'B %h\n' \) |
-        cat .merlin - 2>/dev/null |
+        cat .merlin - 2> /dev/null |
         sort -u
 }
 
@@ -136,8 +136,11 @@ mkbyte ()
 
 clone_github_bap ()
 {
-    git clone git@github.com:maverickwoo/bap.git;
-    cd bap;
+    # clone if we are not in a clone
+    if [ 'bap' != $(basename `pwd`) ]; then
+        git clone git@github.com:maverickwoo/bap.git;
+        cd bap;
+    fi;
 
     # upstream
     git remote add upstream git@github.com:BinaryAnalysisPlatform/bap.git;
@@ -146,6 +149,7 @@ clone_github_bap ()
     for user in \
         `#CMU` \
             dbrumley \
+            ddcc \
             ivg \
             rvantonder \
             tiffanyb \
