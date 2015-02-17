@@ -39,8 +39,8 @@ my_pyenv_init ()
     pyenv virtualenv $PY27 venv27
     pyenv virtualenv $PY34 venv34
 
-    # I prefer python 3 but BAP currently supports 2.7 better
-    pyenv global $PY27
+    # activate both Python 2 and Python 3
+    pyenv global $PY27 $PY34
     hash -r
     pip install \
         bpython \
