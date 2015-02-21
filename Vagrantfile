@@ -41,7 +41,7 @@ Vagrant.configure('2') do |config|
     '/Users/maverick/vmshare' => '/media/sf_vmshare',
     '/Users/maverick/Programming/maverickwoo/qira-docker' => '/media/qira-docker'
   }.each { |h, g|
-    config.vm.synced_folder h, g
+    config.vm.synced_folder h, g, mount_options: ['dmode=775,fmode=664']
   }
 
   provision config, ['provision/public/root', 'provision/private/root'], ''
