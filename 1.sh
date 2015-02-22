@@ -71,7 +71,7 @@ sudo sh /media/vagrant/VBOX*/VBoxLinuxAdditions.run
 sudo apt-get install -y fontconfig-infinality libfreetype6
 sudo ln -sfT /etc/fonts/infinality/styles.conf.avail/win7 \
      /etc/fonts/infinality/conf.d
-sudo sed -i 's/^USE_STYLE="DEFAULT"/USE_STYLE="WINDOWS"/' \
+sudo sed -ri 's/^(USE_STYLE)="DEFAULT"/\1="WINDOWS"/' \
      /etc/profile.d/infinality-settings.sh
 # bugfix: Fontconfig warning:
 # "/etc/fonts/infinality/conf.d/41-repl-os-win.conf", line 148 and 160: Having
