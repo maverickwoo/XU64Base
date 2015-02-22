@@ -1,10 +1,12 @@
+# maverick's own setting: I like these, but ymmv
+
 # things that I don't want to live without
 export LANG=en_US.utf-8         #I hate utf-8 in terminal, but it's everywhere
 export LC_COLLATE=C             #I want sorting by C
-stty -ixon <&2                  #enable C-s & avoid "stdin isn't a terminal"
 set -o ignoreeof                #ignore Ctrl-d
-set -o noclobber                #use >| to overwrite files
-shopt -s checkwinsize
+set -o noclobber                #use >| to force overwrite
+shopt -s checkwinsize           #auto set LINES and COLUMNS
+[[ $- == *i* ]] && stty -ixon   #enable C-s in interactive shells
 
 # share history across shells
 shopt -s histappend
