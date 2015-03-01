@@ -3,16 +3,16 @@
 # VM config: 1cpu+512MB+256GB (will override first two with vagrant)
 # General->Advanced: bidirectional + bidirectional
 # System->Processor: PAE
-# Display->Video: 24MB (retina) + disable 3D due to virtualbox bug
+# Display->Video: enough for UHD
 # Storage: add xubuntu CD + harddisk type SSD
 # Network->Adapter 1->NAT + virtio-net
 
-VBM='VBoxManage'
-ISO="$1"
 CPUS=1                          #small base
-MEM=768                         #small base (512 is too small for desktop)
-VRAM=24                         #prepare for retina
 DISKSIZEGB=${2:-80}
+ISO="$1"
+MEM=768                         #small base (512 is too small for desktop)
+VBM='VBoxManage'
+VRAM=$((2+3840*2160*4/1048576)) #UHD + 2
 
 if [ ! -f "$1" ]; then
 
@@ -33,52 +33,57 @@ else
 
     # configure VM
     $VBM modifyvm $VMUUID \
-         --memory $MEM \
-         --vram $VRAM \
-         --pae on \
-         --cpus $CPUS \
-         --rtcuseutc on \
-         --accelerate3d off `#must disable due to virtualbox bug` \
          --accelerate2dvideo off \
-         --nic1 nat \
-         --nictype1 virtio \
-         --mouse usbtablet \
+         --accelerate3d on `#https://www.virtualbox.org/ticket/10250` \
          --audio coreaudio \
          --audiocontroller ac97 \
          --clipboard bidirectional \
+         --cpus $CPUS \
          --draganddrop bidirectional \
+         --memory $MEM \
+         --mouse usbtablet \
+         --nic1 nat \
+         --nictype1 virtio \
+         --pae on \
+         --rtcuseutc on \
          --usb on \
-         --usbehci on
+         --usbehci on \
+         --vram $VRAM \
+         `#end`
 
     # configure IDE and attach Xubuntu iso
     $VBM storagectl $VMUUID \
-         --name IDE \
          --add ide \
+         --bootable on \
          --controller PIIX4 \
-         --portcount 2 \
          --hostiocache on \
-         --bootable on
+         --name IDE \
+         --portcount 2 \
+         `#end`
     $VBM storageattach $VMUUID \
-         --storagectl IDE \
-         --port 1 \
          --device 0 \
+         --medium $ISO \
+         --port 1 \
+         --storagectl IDE \
          --type dvddrive \
-         --medium $ISO
+         `#end`
 
     # attach Guest Additions iso
     # https://www.virtualbox.org/ticket/13040
     $VBM storageattach $VMUUID \
-         --storagectl IDE \
-         --port 1 \
          --device 1 \
+         --medium emptydrive \
+         --port 1 \
+         --storagectl IDE \
          --type dvddrive \
-         --medium emptydrive
+         `#end`
     $VBM storageattach $VMUUID \
-         --storagectl IDE \
-         --port 1 \
          --device 1 \
+         --medium additions \
+         --port 1 \
+         --storagectl IDE \
          --type dvddrive \
-         --medium additions
+         `#end`
 
     # configure SATA and attach new hdd
     VMPREFIX=$($VBM showvminfo $VMUUID --machinereadable |
@@ -86,22 +91,25 @@ else
                       xargs dirname)
     DISKNAME="${VMPREFIX}/${VMNAME}.vdi"
     $VBM createhd --filename "${DISKNAME}" \
+         --format VDI \
          --sizebyte $(($DISKSIZEGB * 1024 * 1024 * 1024)) \
-         --format VDI > /dev/null
+         `#end` > /dev/null
     $VBM storagectl $VMUUID \
-         --name SATA \
          --add sata \
+         --bootable on \
          --controller IntelAHCI \
-         --portcount 1 \
          --hostiocache off \
-         --bootable on
+         --name SATA \
+         --portcount 1 \
+         `#end`
     $VBM storageattach $VMUUID \
-         --storagectl SATA \
-         --port 0 \
          --device 0 \
-         --type hdd \
          --medium "$DISKNAME" \
-         --nonrotational on
+         --nonrotational on \
+         --port 0 \
+         --storagectl SATA \
+         --type hdd \
+         `#end`
     echo "Disk image created."
 
     # instructions to continue
