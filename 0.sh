@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# VirtualBox Setup
 # VM config: 1cpu+512MB+256GB (will override first two with vagrant)
 # General->Advanced: bidirectional + bidirectional
 # System->Processor: PAE
@@ -9,9 +10,9 @@
 
 CPUS=1                          #small base
 DISKSIZEGB=${2:-80}
-ISO="$1"
+ISO=$1
 MEM=768                         #small base (512 is too small for desktop)
-VBM='VBoxManage'
+VBM=VBoxManage
 VRAM=$((2+3840*2160*4/1048576)) #UHD + 2
 
 if [ ! -f "$1" ]; then
@@ -25,11 +26,11 @@ else
 
     # register VM
     read -ep 'VM name (try "XU64Base"): ' \
-         $([ $BASH_VERSINFO -ge 4 ] && echo "-i XU64Base") \
+         $([ $BASH_VERSINFO -ge 4 ] && echo '-i XU64Base') \
          VMNAME
-    VMUUID=$($VBM createvm --name $VMNAME --ostype Ubuntu_64 --register |
+    VMUUID=$($VBM createvm --name "$VMNAME" --ostype Ubuntu_64 --register |
                     gawk '/^UUID:/{print $2}')
-    echo "VM registered."
+    echo 'VM registered.'
 
     # configure VM
     $VBM modifyvm $VMUUID \
@@ -62,7 +63,7 @@ else
          `#end`
     $VBM storageattach $VMUUID \
          --device 0 \
-         --medium $ISO \
+         --medium "$ISO" \
          --port 1 \
          --storagectl IDE \
          --type dvddrive \
@@ -89,8 +90,8 @@ else
     VMPREFIX=$($VBM showvminfo $VMUUID --machinereadable |
                       gawk -F = '/^CfgFile=/{print $2}' |
                       xargs dirname)
-    DISKNAME="${VMPREFIX}/${VMNAME}.vdi"
-    $VBM createhd --filename "${DISKNAME}" \
+    DISKNAME=$VMPREFIX/$VMNAME.vdi
+    $VBM createhd --filename "$DISKNAME" \
          --format VDI \
          --sizebyte $(($DISKSIZEGB * 1024 * 1024 * 1024)) \
          `#end` > /dev/null
@@ -110,10 +111,10 @@ else
          --storagectl SATA \
          --type hdd \
          `#end`
-    echo "Disk image created."
+    echo 'Disk image created.'
 
     # instructions to continue
-    cat <<"EOM"
+    cat <<EOM
 VM created.
 
 Start the VM to run the Xubuntu installer. Notes:
