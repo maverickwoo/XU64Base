@@ -6,19 +6,18 @@ my_pyenv_inject ()
         eval "$(pyenv virtualenv-init -)";
     fi
 }
-my_pyenv_inject
 
 my_pyenv_init ()
 {
-    local PY27=2.7.9
-    local PY34=3.4.2
-    curl -L \
-         https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer \
-        | bash
+    local PY27='2.7.9';
+    local PY34='3.4.2';
+    local url='https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer';
 
+    # initial inject
+    curl -L $url | bash
     my_pyenv_inject
 
-    # install pre-requisitesfsdlkfjsdlkfjsdlkjsdlk spell check humspell broken
+    # install pre-requisites
     case "$OSTYPE" in
         linux*)
             sudo apt-get install -y \
@@ -39,7 +38,7 @@ my_pyenv_init ()
     pyenv virtualenv $PY27 venv27
     pyenv virtualenv $PY34 venv34
 
-    # activate both Python 2 and Python 3
+    # activate both
     pyenv global $PY27 $PY34
     hash -r
     pip install \
