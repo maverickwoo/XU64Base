@@ -78,12 +78,11 @@ install_font_noto ()
 download_font_powerline ()
 {
     local target='/usr/share/fonts/powerline-fonts';
+    local url='https://github.com/powerline/fonts.git';
     if [ -d $target ]; then
-        ( cd $target; sudo git pull );
+        ( cd $target; sudo git remote set-url origin $url; sudo git pull );
     else
-        sudo git clone -q --depth 1 \
-             https://github.com/Lokaltog/powerline-fonts.git \
-             $target;
+        sudo git clone -q --depth 1 $url $target;
     fi
 }
 
