@@ -1,1 +1,1 @@
-export PATH=/opt/ida-6.6:$PATH
+export PATH=/opt/ida-6.7:$PATH
