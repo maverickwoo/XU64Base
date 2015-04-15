@@ -233,7 +233,7 @@ sudo apt-get install -y \
      opam \
      `#IDA` \
      libqtgui4:i386 \
-     lsb                       `#lmutil` \
+     lsb-core                  `#lmutil` \
      `#LLVM` \
      cmake \
      ninja-build \
