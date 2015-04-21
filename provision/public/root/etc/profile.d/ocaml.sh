@@ -33,6 +33,9 @@ opam_new_stack ()
 
 opam_install_packages ()
 {
+    # bap dependencies
+    opam install -y --deps-only bap
+    # others
     opam install -y \
          `#survival` \
          dum \
@@ -41,17 +44,6 @@ opam_install_packages ()
          ocp-indent \
          ocp-index \
          utop \
-         `#bap dependencies` \
-         bitstring \
-         cmdliner \
-         cohttp \
-         core_bench \
-         core_kernel \
-         ezjsonm \
-         faillib \
-         lwt-zmq \
-         uri \
-         zarith \
          `#nice to have` \
          menhir \
          sqlite3 \
