@@ -1,18 +1,18 @@
 #!/bin/bash
 
+VBM=VBoxManage
+ISO=$1
+
 # VirtualBox Setup
-# VM config: 1cpu+512MB+256GB (will override first two with vagrant)
+# VM config: 1cpu+768MB+256GB (will override first two with vagrant)
 # General->Advanced: bidirectional + bidirectional
 # System->Processor: PAE
 # Display->Video: enough for UHD
 # Storage: add xubuntu CD + harddisk type SSD
 # Network->Adapter 1->NAT + virtio-net
-
-CPUS=1                          #small base
-DISKSIZEGB=${2:-80}
-ISO=$1
-MEM=768                         #small base (512 is too small for desktop)
-VBM=VBoxManage
+CPUS=1
+DISKSIZEGB=${2:-256}
+MEM=768                         #512 is too small for desktop
 VRAM=$((2+3840*2160*4/1048576)) #UHD + 2
 
 if [ ! -f "$1" ]; then
@@ -35,7 +35,7 @@ else
     # configure VM
     $VBM modifyvm $VMUUID \
          --accelerate2dvideo off \
-         --accelerate3d on `#https://www.virtualbox.org/ticket/10250` \
+         --accelerate3d off `#https://www.virtualbox.org/ticket/10250` \
          --audio coreaudio \
          --audiocontroller ac97 \
          --clipboard bidirectional \
@@ -92,8 +92,9 @@ else
                       xargs dirname)
     DISKNAME=$VMPREFIX/$VMNAME.vdi
     $VBM createhd --filename "$DISKNAME" \
-         --format VDI \
+         --format VMDK \
          --sizebyte $(($DISKSIZEGB * 1024 * 1024 * 1024)) \
+         --variant Split2G \
          `#end` > /dev/null
     $VBM storagectl $VMUUID \
          --add sata \
