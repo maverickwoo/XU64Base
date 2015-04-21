@@ -86,7 +86,6 @@ sudo sed -ri 's/^(DEFAULT_FORWARD_POLICY)=.*/\1="ACCEPT"/' /etc/default/ufw
 sudo sed -ri \
     's/^(GRUB_CMDLINE_LINUX)=.*/\1="cgroup_enable=memory swapaccount=1"/' \
     /etc/default/grub
-sudo update-grub
 
 # vagrant: do this after docker and vboxsf
 echo 'root:vagrant' | sudo chpasswd
@@ -103,10 +102,12 @@ chmod 600 ~/.ssh/authorized_keys
 sudo sed -ri 's/^(AVAHI_DAEMON_DETECT_LOCAL)=.*/\1=0/' /etc/default/avahi-daemon
 sudo chmod g+w /etc/profile.d   #vagrant provisioning
 sudo mkdir /etc/skel/bin        #everyone needs this directory
+sudo sed -i '$aGRUB_RECORDFAIL_TIMEOUT=2' /etc/default/grub
+sudo update-grub
 
 # no more Guest Additions CD on desktop
 while head -c 1 /dev/sr1 &> /dev/null; do
-    sudo eject -v /dev/sr1;
+    sudo eject -v /dev/sr1
 done
 rm -rf /media/vagrant/VBOX
 
