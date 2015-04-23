@@ -249,6 +249,8 @@ sudo apt-get install -y \
      g++-arm-linux-gnueabihf \
      g++-powerpc-linux-gnu \
      g++-powerpc64le-linux-gnu \
+     gcc-arm-linux-gnueabi \
+     gdb-multiarch \
      linux-libc-dev:i386 \
      `#end`
 
@@ -258,9 +260,11 @@ sudo apt-get install -y \
      augeas-tools \
      bash-doc                  `#info` \
      binutils-doc              `#info` \
+     bison \
      curl \
      emacs24 \
      emacs24-el \
+     flex \
      font-manager \
      gawk \
      gcc-doc                   `#info` \
@@ -286,6 +290,7 @@ sudo apt-get install -y \
      ssh \
      subversion \
      terminator \
+     texinfo \
      tig \
      tmux \
      tree \
