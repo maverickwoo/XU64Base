@@ -193,7 +193,7 @@ fi
 docker pull phusion/baseimage:latest >/dev/null &
 
 # uninstall some unneeded stuff to save time and space
-sudo apt-get remove -y \
+sudo apt-get purge -y --auto-remove \
      abiword-common \
      gmusicbrowser \
      gnumeric-common \
@@ -208,7 +208,6 @@ sudo apt-get remove -y \
      transmission-common \
      xfburn \
      `#end`
-sudo apt-get -y autoremove
 
 # dist-upgrade
 sudo apt-get update
