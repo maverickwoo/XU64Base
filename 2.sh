@@ -261,6 +261,7 @@ sudo apt-get install -y \
      binutils-doc              `#info` \
      bison \
      curl \
+     dos2unix \
      emacs24 \
      emacs24-el \
      flex \
@@ -283,6 +284,7 @@ sudo apt-get install -y \
      python-pip \
      realpath \
      renameutils \
+     rlwrap \
      screen \
      silversearcher-ag \
      sqlite \
