@@ -4,6 +4,7 @@
 export LANG=en_US.utf-8         #I hate utf-8 in terminal, but it's everywhere
 export LC_COLLATE=C             #I want sorting by C
 set -o ignoreeof                #ignore Ctrl-d
+export IGNOREEOF=1000           #... this number of times
 set -o noclobber                #use >| to force overwrite
 shopt -s checkwinsize           #auto set LINES and COLUMNS
 [[ $- == *i* ]] && stty -ixon   #enable C-s in interactive shells
