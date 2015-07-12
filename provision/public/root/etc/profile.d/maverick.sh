@@ -17,6 +17,16 @@ HISTSIZE=$HISTFILESIZE
 HISTTIMEFORMAT='%F %T '
 PROMPT_COMMAND="$PROMPT_COMMAND history -a; echo '#$(date +%s);' >> ~/.bash_history; history -n;"
 
+# pager and other common stuff
+export EDITOR=vim
+export LESS=iMRSX               #-F seems to cause problem with lessopen
+export PAGER="less -$LESS"
+export VISUAL=vim               #get into the habit of using vim in terminal
+[ -r ~/bin/z.git/z.sh ] && . ~/bin/z.git/z.sh
+if [ -r ~/bin/lesspipe.git/lesspipe.sh ]; then
+    export LESSOPEN='| ~/bin/lesspipe.git/lesspipe.sh %s'
+fi
+
 # common functions
 num_proc ()
 {
