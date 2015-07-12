@@ -5,6 +5,11 @@ export OPAMSOLVERTIMEOUT='160'
 
 alias utop='utop -principal -short-paths -strict-sequence -w +a-4-44'
 
+## bitstring hack
+if [ -d $(opam config var prefix)/lib/bitstring ]; then
+    ln -sf ../ocaml/unix.cma $(opam config var prefix)/lib/bitstring
+fi
+
 ## stack manipulation
 
 my_opam_init ()
