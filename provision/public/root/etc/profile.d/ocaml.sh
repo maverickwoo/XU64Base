@@ -33,7 +33,7 @@ opam_new_stack ()
     echo;
     eval $CMD;
     eval $(opam config env);
-    opam_install_packages
+    echo "Run opam_install_packages to install recommended packages."
 }
 
 opam_install_packages ()
@@ -49,7 +49,7 @@ opam_install_packages ()
          ocp-indent \
          ocp-index \
          utop \
-         `#nice to have` \
+         `#nice to have and fast to compile` \
          menhir \
          sqlite3 \
          `#end`;
@@ -96,7 +96,39 @@ oco ()
 
 dotmerlin ()
 {
-    local extras=$(cat <<"EOF"
+    # Usually we run dotmerlin at the root of a project directory and so we
+    # optimize the default case for this use.
+
+    if [ $# -eq 0 ]; then
+        # no arg: this dir, with REC
+        local specific=$(cat <<EOF
+B ./_build/**
+REC
+S .
+S ./_build/**
+S ./lib/**
+S ./src/**
+EOF
+              );
+    else                        #we have a real $1
+        if [ "$1" == "" ]; then
+            # an empty arg: current stack
+            local target=$(opam config var prefix);
+        else
+            # non-empty arg: specific stack
+            local target=$1;
+        fi;
+        local specific=$(cat <<EOF
+B $target/**
+S $target/**
+EOF
+              );
+    fi;
+    # 4 fragile pattern match, e.g., wildcard; I disable this even in actual
+    # 26, 27 are unused variables; very annoying inside merlin
+    # 29 is unescaped eof in a string; somewhat annoying inside merlin
+    # 44 open shadows already-defined identifier; I disable this even in actual
+    local common=$(cat <<EOF
 EXT custom_printf
 EXT here
 EXT js
@@ -104,9 +136,11 @@ EXT lwt
 EXT nonrec
 EXT ounit
 FLG -short-paths
+FLG -strict-formats
 FLG -strict-sequence
+FLG -w +a-4-26-27-29-44
 PKG core_kernel
-REC
+PKG dum
 EOF
           );
 
@@ -114,16 +148,19 @@ EOF
     # (princ (regexp-opt '("ml" "mli" "mll" "mly") t)) ;'
     # (princ (regexp-opt '("a" "cmi" "cmo" "cmt" "cmti" "cmx" "cmxa" "o") t)) ;'
 
-    # note: on OSX my ~/bin/find -> /opt/local/bin/gfind
-    find ${1:-.} \( -samefile ${1:-.} -printf "$extras\n" \) \
-         -or \( -regex '.+\.ml[ily]?$' -printf 'S %h\n' \) \
-         -or \( -regex '.+\.cm\(ti\|xa\|[iotx]\|[ao]\)$' -printf 'B %h\n' \) |
+    # Historically there was no ** and so we had to use GNU find:
+    # find ${1:-.} \( -samefile ${1:-.} -printf "$specific\n$common\n" \) \
+    #      -or \( -regex '.+\.ml[ily]?$' -printf 'S %h\n' \) \
+    #      -or \( -regex '.+\.cm\(ti\|xa\|[iotx]\|[ao]\)$' -printf 'B %h\n' \) |
+
+    printf "$specific\n$common\n" |
         cat .merlin - 2> /dev/null |
         sort -u
 }
 
 mkbyte ()
 {
+    # Given a directory with .native files, build the corresponding .byte files.
     find . -maxdepth 1 -type l -name \*.native -exec readlink {} \; |
         gawk -F'/_build/|.native$' '{print $2 ".byte"}' |
         xargs ocamlbuild -tag syntax_camlp4o "$@"
