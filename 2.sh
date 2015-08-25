@@ -220,10 +220,10 @@ sudo apt-file update >/dev/null &
 # tier 1: BAP + IDA + LLVM (building tools) + qira (exo-docker) + cross compiler
 sudo apt-get install -y \
      `#BAP` \
-     binutils-multiarch-dev    `ocamlobjinfo cmxs` \
+     binutils-multiarch-dev    `#ocamlobjinfo cmxs` \
      clang \
      libgmp-dev                `#zarith` \
-     libiberty-dev             `ocamlobjinfo cmxs` \
+     libiberty-dev             `#ocamlobjinfo cmxs` \
      libncurses5-dev           `#ocamlfind` \
      libzmq3-dev \
      llvm \
