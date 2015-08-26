@@ -240,7 +240,7 @@ sudo apt-get install -y \
      binfmt-support \
      google-chrome-stable \
      qemu-user-static \
-     qemu-util \
+     qemu-utils \
      socat \
      `#cross` \
      g++-4.8-multilib \
