@@ -17,72 +17,72 @@ calm_down ()
 
 download_atom ()
 {
-    local source='/tmp/atom.deb';
+    local source='/tmp/atom.deb'
     wget -q -O $source https://atom.io/download/deb
 }
 
 install_atom ()
 {
-    local source='/tmp/atom.deb';
-    sudo dpkg -i $source;
+    local source='/tmp/atom.deb'
+    sudo dpkg -i $source
     rm $source
 }
 
 download_docker_ssh ()
 {
-    local source='/tmp/docker_ssh.tar.gz';
+    local source='/tmp/docker_ssh.tar.gz'
     wget -q -O $source \
          https://github.com/phusion/baseimage-docker/archive/master.tar.gz
 }
 
 install_docker_ssh ()
 {
-    local source='/tmp/docker_ssh.tar.gz';
-    tar xzf $source;
-    sudo baseimage-docker-master/install-tools.sh;
+    local source='/tmp/docker_ssh.tar.gz'
+    tar xzf $source
+    sudo baseimage-docker-master/install-tools.sh
     rm -rf $source baseimage-docker-master
 }
 
 download_font_microsoft ()
 {
-    local source='/tmp/font_microsoft';
+    local source='/tmp/font_microsoft'
     wget -q -O $source \
          http://download.microsoft.com/download/E/6/7/E675FFFC-2A6D-4AB0-B3EB-27C9F8C8F696/PowerPointViewer.exe
 }
 
 install_font_microsoft ()
 {
-    local source='/tmp/font_microsoft';
-    local target='/usr/share/fonts/microsoft-fonts';
-    sudo apt-get install -y cabextract;
-    cabextract -L -d /tmp -F ppviewer.cab $source;
-    sudo cabextract -L -d $target -F \*.tt\? /tmp/ppviewer.cab;
+    local source='/tmp/font_microsoft'
+    local target='/usr/share/fonts/microsoft-fonts'
+    sudo apt-get install -y cabextract
+    cabextract -L -d /tmp -F ppviewer.cab $source
+    sudo cabextract -L -d $target -F \*.tt\? /tmp/ppviewer.cab
     rm $source /tmp/ppviewer.cab
 }
 
 download_font_noto ()
 {
-    local source='/tmp/Noto.zip';
+    local source='/tmp/Noto.zip'
     wget -q -O $source https://www.google.com/get/noto/pkgs/Noto.zip
 }
 
 install_font_noto ()
 {
-    local source='/tmp/Noto.zip';
-    local target='/usr/share/fonts/Noto';
-    sudo rm -rf $target;
-    sudo unzip $source -d $target;
+    local source='/tmp/Noto.zip'
+    local target='/usr/share/fonts/Noto'
+    sudo rm -rf $target
+    sudo unzip $source -d $target
     rm $source
 }
 
 download_font_powerline ()
 {
-    local target='/usr/share/fonts/powerline-fonts';
-    local url='https://github.com/powerline/fonts.git';
+    local target='/usr/share/fonts/powerline-fonts'
+    local url='https://github.com/powerline/fonts.git'
     if [ -d $target ]; then
-        ( cd $target; sudo git remote set-url origin $url; sudo git pull );
+        ( cd $target; sudo git remote set-url origin $url; sudo git pull )
     else
-        sudo git clone -q --depth 1 $url $target;
+        sudo git clone -q --depth 1 $url $target
     fi
 }
 
@@ -90,73 +90,73 @@ install_font_powerline () { true; }
 
 download_font_source_code_pro ()
 {
-    local source='/tmp/source-code-pro.tgz';
+    local source='/tmp/source-code-pro.tgz'
     wget -q -O $source \
          https://github.com/adobe-fonts/source-code-pro/archive/1.017R.tar.gz
 }
 
 install_font_source_code_pro ()
 {
-    local source='/tmp/source-code-pro.tgz';
-    local target='/usr/share/fonts/source-code-pro';
-    sudo rm -rf $target;
-    sudo mkdir -p $target;
-    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf';
+    local source='/tmp/source-code-pro.tgz'
+    local target='/usr/share/fonts/source-code-pro'
+    sudo rm -rf $target
+    sudo mkdir -p $target
+    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf'
     rm $source
 }
 
 download_font_source_sans_pro ()
 {
-    local source='/tmp/source-sans-pro.tgz';
+    local source='/tmp/source-sans-pro.tgz'
     wget -q -O $source \
          https://github.com/adobe-fonts/source-sans-pro/archive/2.010R-ro/1.065R-it.tar.gz
 }
 
 install_font_source_sans_pro ()
 {
-    local source='/tmp/source-sans-pro.tgz';
-    local target='/usr/share/fonts/source-sans-pro';
-    sudo rm -rf $target;
-    sudo mkdir -p $target;
-    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf';
+    local source='/tmp/source-sans-pro.tgz'
+    local target='/usr/share/fonts/source-sans-pro'
+    sudo rm -rf $target
+    sudo mkdir -p $target
+    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf'
     rm $source
 }
 
 download_font_source_serif_pro ()
 {
-    local source='/tmp/source-serif-pro.tgz';
+    local source='/tmp/source-serif-pro.tgz'
     wget -q -O $source \
          https://github.com/adobe-fonts/source-serif-pro/archive/1.014R.tar.gz
 }
 
 install_font_source_serif_pro ()
 {
-    local source='/tmp/source-serif-pro.tgz';
-    local target='/usr/share/fonts/source-serif-pro';
-    sudo rm -rf $target;
-    sudo mkdir -p $target;
-    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf';
+    local source='/tmp/source-serif-pro.tgz'
+    local target='/usr/share/fonts/source-serif-pro'
+    sudo rm -rf $target
+    sudo mkdir -p $target
+    sudo tar --strip-components 2 --wildcards -C $target -zxvf $source '*/OTF/*.otf'
     rm $source
 }
 
 download_lmutil ()
 {
-    local source='/tmp/lmutil.tgz';
+    local source='/tmp/lmutil.tgz'
     wget -q -O $source \
          https://www.hex-rays.com/products/ida/support/flexlm/lmutil-x64_lsb-11.12.1.0v6.tar.gz
 }
 
 install_lmutil ()
 {
-    local source='/tmp/lmutil.tgz';
-    local target='/usr/local/bin';
-    sudo tar -C $target -zxvf $source;
+    local source='/tmp/lmutil.tgz'
+    local target='/usr/local/bin'
+    sudo tar -C $target -zxvf $source
     rm $source
 }
 
 download_parallel ()
 {
-    local source='/tmp/parallel.tar.bz2';
+    local source='/tmp/parallel.tar.bz2'
     wget -q -O $source \
          http://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2
 }
@@ -174,15 +174,15 @@ install_parallel ()
 
 download_sublime ()
 {
-    local source='/tmp/sublime3.tgz';
+    local source='/tmp/sublime3.tgz'
     wget -q -O $source \
          http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3065_amd64.deb
 }
 
 install_sublime ()
 {
-    local source='/tmp/sublime3.tgz';
-    sudo dpkg -i $source;
+    local source='/tmp/sublime3.tgz'
+    sudo dpkg -i $source
     rm $source
 }
 
