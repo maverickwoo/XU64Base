@@ -154,6 +154,24 @@ install_lmutil ()
     rm $source
 }
 
+download_parallel ()
+{
+    local source='/tmp/parallel.tar.bz2';
+    wget -q -O $source \
+         http://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2
+}
+
+install_parallel ()
+{
+    local source='/tmp/parallel.tar.bz2'
+    tar -C /tmp -xf $source
+    pushd /tmp/parallel-* > /dev/null
+    ./configure
+    make
+    sudo make install
+    popd > /dev/null
+}
+
 download_sublime ()
 {
     local source='/tmp/sublime3.tgz';
@@ -186,6 +204,7 @@ if [ vagrant == "$USER" ]; then
     download_font_source_sans_pro &
     download_font_source_serif_pro &
     download_lmutil &
+    download_parallel &
     download_sublime &
 fi
 
@@ -304,8 +323,6 @@ sudo apt-get install -y \
      vim-gtk \
      xml2 \
      `#end`
-sudo apt-get -o Dpkg::Options::="--force-conflicts" install -y \
-     parallel                  `#niceload, parallel`
 sudo chmod a+x $(locate git-new-workdir)
 sudo ln -sf $(locate git-new-workdir) /usr/local/bin
 
@@ -345,6 +362,7 @@ if [ vagrant == "$USER" ]; then
     install_font_source_sans_pro
     install_font_source_serif_pro
     install_lmutil
+    install_parallel
     install_sublime
     sudo chmod -R og=u,og-w /usr/share/fonts
 fi
