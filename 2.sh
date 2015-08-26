@@ -221,15 +221,21 @@ sudo apt-file update >/dev/null &
 sudo apt-get install -y \
      `#BAP` \
      binutils-multiarch-dev    `#ocamlobjinfo cmxs` \
-     clang \
      libgmp-dev                `#zarith` \
      libiberty-dev             `#ocamlobjinfo cmxs` \
      libncurses5-dev           `#ocamlfind` \
-     libzmq3-dev \
-     llvm \
-     m4                        `#ocamlfind` \
      ocaml \
      opam \
+     `#BAP depext` \
+     clang \
+     libcurl4-gnutls-dev \
+     libgmp-dev                `#zarith` \
+     libzip-dev \
+     llvm \
+     llvm-3.4-dev \
+     m4                        `#ocamlfind` \
+     time \
+     zlib1g-dev \
      `#IDA` \
      libqtgui4:i386 \
      lsb-core                  `#lmutil` \
