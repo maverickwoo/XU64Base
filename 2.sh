@@ -306,6 +306,7 @@ sudo apt-get install -y \
      ncdu \
      nmap \
      pigz \
+     pv \
      python-pip \
      realpath \
      renameutils \
