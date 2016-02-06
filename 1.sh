@@ -50,6 +50,9 @@ echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' |
 # add git
 sudo add-apt-repository -s -y ppa:git-core/ppa
 
+# add i386
+sudo dpkg --add-architecture i386
+
 # add mariadb
 sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 \
      0xcbcb082a1bb943db
