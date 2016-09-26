@@ -1,4 +1,4 @@
-export OCAMLPARAM='_,annot=0,bin-annot=1,g=1,short-paths=1'
+export OCAMLPARAM='_,annot=1,bin-annot=1,g=1,short-paths=1'
 export OCAMLRUNPARAM='b'
 export OPAMKEEPBUILDDIR='true'
 export OPAMSOLVERTIMEOUT='160'
